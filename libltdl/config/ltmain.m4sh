@@ -5075,6 +5075,17 @@ func_mode_link ()
         continue
         ;;
 
+      # OS/2 uses -Zxxx to specify OS/2-specific options
+      -Z*)
+	compiler_flags="$compiler_flags $arg"
+	func_append compile_command " $arg"
+	func_append finalize_command " $arg"
+	case $arg in
+	-Zlinker | -Zstack) prev=xcompiler;;
+	esac
+	continue
+	;;
+
       # Some other compiler flag.
       -* | +*)
         func_quote_for_eval "$arg"
