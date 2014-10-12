@@ -3911,6 +3911,11 @@ m4_if([$1], [CXX], [
       # (--disable-auto-import) libraries
       m4_if([$1], [GCJ], [],
 	[_LT_TAGVAR(lt_prog_compiler_pic, $1)='-DDLL_EXPORT'])
+      case $host_os in
+      os2*)
+	_LT_TAGVAR(lt_prog_compiler_static, $1)='${wl}-static'
+	;;
+      esac
       ;;
     darwin* | rhapsody*)
       # PIC is the default on this platform
@@ -4229,6 +4234,11 @@ m4_if([$1], [CXX], [
       # (--disable-auto-import) libraries
       m4_if([$1], [GCJ], [],
 	[_LT_TAGVAR(lt_prog_compiler_pic, $1)='-DDLL_EXPORT'])
+      case $host_os in
+      os2*)
+	_LT_TAGVAR(lt_prog_compiler_static, $1)='${wl}-static'
+	;;
+      esac
       ;;
 
     darwin* | rhapsody*)
@@ -4312,6 +4322,11 @@ m4_if([$1], [CXX], [
       # built for inclusion in a dll (and should export symbols for example).
       m4_if([$1], [GCJ], [],
 	[_LT_TAGVAR(lt_prog_compiler_pic, $1)='-DDLL_EXPORT'])
+      case $host_os in
+      os2*)
+	_LT_TAGVAR(lt_prog_compiler_static, $1)='${wl}-static'
+	;;
+      esac
       ;;
 
     hpux9* | hpux10* | hpux11*)
