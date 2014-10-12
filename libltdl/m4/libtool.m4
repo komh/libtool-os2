@@ -2749,12 +2749,17 @@ openbsd*)
 
 os2*)
   libname_spec='$name'
+  version_type=windows
   shrext_cmds=".dll"
+  need_version=no
   need_lib_prefix=no
   # OS/2 limits a length of a DLL basename up to 8 characters.
   # So there is need to use a short name instead of a original name
   # longer than 8 characters. And replace '.' with '_'.
-  soname_spec='`test -n "$os2dllname" && libname="$os2dllname"; $ECHO $libname | cut -b -8 | tr . _`${shared_ext}'
+  soname_spec='`test -n "$os2dllname" && libname="$os2dllname";
+    v=$($ECHO ${release}${versuffix} | tr -d .-);
+    n=$($ECHO $libname | cut -b -$((8 - ${#v})) | tr . _);
+    $ECHO ${n}${v}`${shared_ext}'
   library_names_spec='${libname}_dll.$libext'
   dynamic_linker='OS/2 ld.exe'
   shlibpath_var=BEGINLIBPATH
