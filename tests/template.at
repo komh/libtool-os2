@@ -1,6 +1,7 @@
 # template.at -- test C++ templates with libtool              -*- Autotest -*-
 #
-#   Copyright (C) 2005, 2007, 2008 Free Software Foundation, Inc.
+#   Copyright (C) 2005, 2007-2008, 2011-2014 Free Software Foundation,
+#   Inc.
 #   Written by Markus Christen, 2005
 #
 #   This file is part of GNU Libtool.
@@ -97,7 +98,7 @@ dnl with autoreconf, use:
 dnl AT_DATA(configure.ac,
 dnl [[AC_INIT([template_1], ]]AT_PACKAGE_VERSION[[, ]]AT_PACKAGE_BUGREPORT[[)
 dnl AC_CONFIG_HEADERS([config.h:config-h.in])
-dnl AC_CONFIG_MACRO_DIR([m4])
+dnl AC_CONFIG_MACRO_DIRS([m4])
 dnl AC_CONFIG_AUX_DIR([config])
 dnl AM_INIT_AUTOMAKE([foreign])
 dnl AC_LANG([C++])
@@ -128,10 +129,12 @@ LT_AT_TAG([CXX])
 AT_KEYWORDS([libtool])
 
 noskip=:
+withundef=:
 # Mac OS X.
-# The linker has issues with this test. 
+# The linker has issues with this test.
 case $host in
 *-darwin*) noskip=false ;;
+*-aix*) withundef=false ;;
 esac
 
 
@@ -213,17 +216,17 @@ cd obj
 
 # If the compiler supports -c -o, we want to use it:
 # it may make a difference for templates
-eval `$LIBTOOL --tag=CXX --config | grep ^compiler_c_o=`
+eval `$LIBTOOL --tag=CXX --config | $GREP ^compiler_c_o=`
 case $compiler_c_o in
 yes)
   main_o=sub/main.$OBJEXT
   AT_CHECK([$CXX $CPPFLAGS $CXXFLAGS -c -o $main_o ../src/sub/main.cpp],
-  	   [0], [ignore], [ignore])
+	   [0], [ignore], [ignore])
   ;;
 *)
   main_o=main.$OBJEXT
   AT_CHECK([$CXX $CPPFLAGS $CXXFLAGS -c ../src/sub/main.cpp],
-  	   [0], [ignore], [ignore])
+	   [0], [ignore], [ignore])
   ;;
 esac
 
@@ -242,7 +245,7 @@ AT_CHECK([$LIBTOOL --tag=CXX --mode=link $CXX $CXXFLAGS $LDFLAGS -o sub/main$EXE
 	 [0], [ignore], [ignore])
 LT_AT_EXEC_CHECK([./sub/main], [ignore])
 # lib convenience
-if $noskip; then
+if $noskip && $withundef; then
   AT_CHECK([$LIBTOOL --tag=CXX --mode=link $CXX $CXXFLAGS $LDFLAGS -o lib2/libb.la lib2/b.lo -rpath /foo],
 	   [0], [ignore], [ignore])
   AT_CHECK([$LIBTOOL --tag=CXX --mode=link $CXX $CXXFLAGS $LDFLAGS -o sub/main$EXEEXT $main_o lib2/libb.la lib/liba.la],
@@ -253,11 +256,14 @@ fi
 # both installed
 AT_CHECK([$LIBTOOL --tag=CXX --mode=link $CXX $CXXFLAGS $LDFLAGS -o lib/liba.la lib/a.lo -rpath /foo],
 	 [0], [ignore], [ignore])
-AT_CHECK([$LIBTOOL --tag=CXX --mode=link $CXX $CXXFLAGS $LDFLAGS -o lib2/libb.la lib2/b.lo -rpath /bar],
-	 [0], [ignore], [ignore])
-AT_CHECK([$LIBTOOL --tag=CXX --mode=link $CXX $CXXFLAGS $LDFLAGS -o sub/main$EXEEXT $main_o lib2/libb.la lib/liba.la],
-	 [0], [ignore], [ignore])
-LT_AT_EXEC_CHECK([./sub/main])
+if $withundef; then
+  AT_CHECK([$LIBTOOL --tag=CXX --mode=link $CXX $CXXFLAGS $LDFLAGS -o lib2/libb.la lib2/b.lo -rpath /bar],
+	   [0], [ignore], [ignore])
+  AT_CHECK([$LIBTOOL --tag=CXX --mode=link $CXX $CXXFLAGS $LDFLAGS -o sub/main$EXEEXT $main_o lib2/libb.la lib/liba.la],
+	   [0], [ignore], [ignore])
+  LT_AT_EXEC_CHECK([./sub/main])
+fi
+
 # both convenience, libb depending on liba
 AT_CHECK([$LIBTOOL --tag=CXX --mode=link $CXX $CXXFLAGS $LDFLAGS -o lib/liba.la lib/a.lo],
 	 [0], [ignore], [ignore])
@@ -270,17 +276,17 @@ LT_AT_EXEC_CHECK([./sub/main])
 if $noskip; then
 
   AT_CHECK([$LIBTOOL --tag=CXX --mode=link $CXX $CXXFLAGS $LDFLAGS -o lib2/libb.la lib2/b.lo lib/liba.la -rpath /foo],
-  	 [0], [ignore], [ignore])
+	 [0], [ignore], [ignore])
   AT_CHECK([$LIBTOOL --tag=CXX --mode=link $CXX $CXXFLAGS $LDFLAGS -o sub/main$EXEEXT $main_o lib2/libb.la],
-  	 [0], [ignore], [ignore])
+	 [0], [ignore], [ignore])
   LT_AT_EXEC_CHECK([./sub/main])
 fi
 # both installed
 if $noskip; then
   AT_CHECK([$LIBTOOL --tag=CXX --mode=link $CXX $CXXFLAGS $LDFLAGS -o lib2/libb.la lib2/b.lo lib/liba.la -rpath /bar],
-  	 [0], [ignore], [ignore])
+	 [0], [ignore], [ignore])
   AT_CHECK([$LIBTOOL --tag=CXX --mode=link $CXX $CXXFLAGS $LDFLAGS -o sub/main$EXEEXT $main_o lib2/libb.la],
-  	 [0], [ignore], [ignore])
+	 [0], [ignore], [ignore])
   LT_AT_EXEC_CHECK([./sub/main])
 fi
 
@@ -293,7 +299,7 @@ dnl
 dnl AT_DATA(src/configure.ac,
 dnl [[AC_INIT([template_2], ]]AT_PACKAGE_VERSION[[, ]]AT_PACKAGE_BUGREPORT[[)
 dnl AC_CONFIG_HEADERS([config.h:config-h.in])
-dnl AC_CONFIG_MACRO_DIR([m4])
+dnl AC_CONFIG_MACRO_DIRS([m4])
 dnl AC_CONFIG_AUX_DIR([config])
 dnl AM_INIT_AUTOMAKE([foreign subdir-objects])
 dnl AC_LANG([C++])

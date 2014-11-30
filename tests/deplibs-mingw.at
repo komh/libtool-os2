@@ -1,6 +1,6 @@
 # deplibs-mingw.at --                         -*- Autotest -*-
 
-#   Copyright (C) 2010 Free Software Foundation, Inc.
+#   Copyright (C) 2010-2014 Free Software Foundation, Inc.
 #
 #   This file is part of GNU Libtool.
 #
@@ -21,7 +21,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 ####
 
-# Check that deplibs are detected correctly even if there is no `file'
+# Check that deplibs are detected correctly even if there is no 'file'
 # command installed.
 
 AT_SETUP([deplibs without file command])
@@ -31,6 +31,7 @@ cwd=`pwd`
 instdir=$cwd/inst
 libdir=$instdir/lib
 bindir=$instdir/bin
+save_LDFLAGS=$LDFLAGS
 LDFLAGS="$LDFLAGS -no-undefined"
 
 mkdir inst inst/bin inst/lib
@@ -54,7 +55,7 @@ AT_CHECK([$LIBTOOL --mode=install cp liba.la $libdir], [], [ignore], [ignore])
 AT_CHECK([$LIBTOOL --mode=clean rm -f liba.la], [], [ignore], [ignore])
 rm -f $libdir/liba.la
 
-# check once with `file' (if present) and once without, if on MinGW.
+# check once with 'file' (if present) and once without, if on MinGW.
 for try in with-file without-file; do
   AT_CHECK([$LIBTOOL --mode=link $CC $CFLAGS $LDFLAGS -o libb.la b.lo -rpath $libdir ]dnl
 	   [-L$libdir -la],
@@ -76,7 +77,9 @@ EOF
       cd new-libtool
       # configure might fail due to in-tree build of toplevel, or
       # missing configure flags and other reasons.
+      LDFLAGS=$save_LDFLAGS
       LT_AT_CONFIGURE([|| exit 77], ["$abs_top_srcdir"/configure])
+      LDFLAGS="$LDFLAGS -no-undefined"
       cd ..
       LIBTOOL=new-libtool/libtool
       export LIBTOOL

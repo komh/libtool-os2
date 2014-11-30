@@ -1,6 +1,6 @@
 # cmdline_wrap.at -- run tests with low max_cmd_len           -*- Autotest -*-
 
-#   Copyright (C) 2007, 2009 Free Software Foundation, Inc.
+#   Copyright (C) 2007, 2009, 2011-2014 Free Software Foundation, Inc.
 #   Written by Ralf Wildenhues, 2007
 #
 #   This file is part of GNU Libtool.
@@ -26,16 +26,20 @@
 # We simulate this by setting max_cmd_len very low.
 
 AT_SETUP([Run tests with low max_cmd_len])
-AT_KEYWORDS([recursive])
+AT_KEYWORDS([recursive expensive])
+dnl If we already have failures, then reruns will fail too!
+fail_list=`for f in ?/fail ??/fail ???/fail ????/fail; do test -f "$f" && echo "$f"; done`
+echo "DEBUG: fail_list='$fail_list'"
+AT_CHECK([test -z "$fail_list" || (exit 77)])
 m4_ifdef([AT_CAPTURE_FILE],
 [AT_CAPTURE_FILE([testsuite.log])])
 
-sed 's,max_cmd_len=.*,max_cmd_len="24",' < $LIBTOOL > libtool
+$SED 's|max_cmd_len=.*|max_cmd_len="24"|' < $LIBTOOL > libtool
 chmod +x libtool
 LIBTOOL=`pwd`/libtool
 export LIBTOOL
 # run the suite in a subdirectory, otherwise the two suites will compete
-# for the output file `testsuite.log'.
+# for the output file 'testsuite.log'.
 mkdir tests
 cd tests
 INNER_TESTSUITEFLAGS="$INNER_TESTSUITEFLAGS abs_top_srcdir=$abs_top_srcdir \

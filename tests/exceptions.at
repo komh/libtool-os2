@@ -1,6 +1,6 @@
 # exception.at -- test C++ exception handling with libtool  -*- Autotest -*-
 #
-#   Copyright (C) 2010 Free Software Foundation, Inc.
+#   Copyright (C) 2010-2014 Free Software Foundation, Inc.
 #
 #   This file is part of GNU Libtool.
 #
@@ -31,7 +31,7 @@ AT_KEYWORDS([libltdl])
 # Skip this test when called from:
 #    make distcheck DISTCHECK_CONFIGURE_FLAGS=--disable-ltdl-install
 AT_CHECK([case $LIBLTDL in #(
- */_inst/lib/*) test -f $LIBLTDL || (exit 77) ;;
+ */_inst/lib/*) test -f "$LIBLTDL" || (exit 77) ;;
 esac], [], [ignore])
 
 CPPFLAGS="$LTDLINCL $CPPFLAGS"
@@ -39,7 +39,7 @@ CPPFLAGS="$LTDLINCL $CPPFLAGS"
 # Win32 (and cygwin) notes
 # ------------------------
 # When using C++ and Win32 DLLs, data types used in the DLL's interface
-# which are other-than-POD, must have vtables, typeinfo, and other
+# that are other-than-POD, must have vtables, typeinfo, and other
 # elements resolved when the client is linked.  This includes exception
 # classes.  Therefore, the exception class "modexc" thrown by the
 # dynamically-loaded module must be defined in a separate DLL, to which
@@ -80,9 +80,9 @@ AT_DATA([common.h],
 #include <exception>
 #include <string>
 
-#if defined(__CYGWIN__) || defined(_WIN32)
-# if defined(DLL_EXPORT) || defined(USING_COMMON_DLL)
-#  if defined(LIBTOOL_TEST_IN_COMMON)
+#if defined __CYGWIN__ || defined _WIN32
+# if defined DLL_EXPORT || defined USING_COMMON_DLL
+#  if defined LIBTOOL_TEST_IN_COMMON
 #   define COMMON_IMPEXP __declspec (dllexport)
 #  else
 #   define COMMON_IMPEXP __declspec (dllimport)
@@ -124,9 +124,9 @@ int common_dummy (void)
 AT_DATA([module.h],
 [[#include "common.h"
 
-#if defined(__CYGWIN__) || defined(_WIN32)
-# if defined(DLL_EXPORT) || defined(USING_MODULE_DLL)
-#  if defined(LIBTOOL_TEST_IN_MODULE)
+#if defined __CYGWIN__ || defined _WIN32
+# if defined DLL_EXPORT || defined USING_MODULE_DLL
+#  if defined LIBTOOL_TEST_IN_MODULE
 #   define MODULE_IMPEXP __declspec (dllexport)
 #  else
 #   define MODULE_IMPEXP __declspec (dllimport)
@@ -170,9 +170,9 @@ AT_DATA([lib.h],
 #include <string>
 
 
-#if defined(__CYGWIN__) || defined(_WIN32)
-# if defined(DLL_EXPORT) || defined(USING_LIB_DLL)
-#  if defined(LIBTOOL_TEST_IN_LIB)
+#if defined __CYGWIN__ || defined _WIN32
+# if defined DLL_EXPORT || defined USING_LIB_DLL
+#  if defined LIBTOOL_TEST_IN_LIB
 #   define LIB_IMPEXP __declspec (dllexport)
 #  else
 #   define LIB_IMPEXP __declspec (dllimport)

@@ -1,7 +1,6 @@
 # convenience.at -- testing C convenience archives            -*- Autotest -*-
 
-#   Copyright (C) 2005, 2007, 2008, 2009, 2010 Free Software Foundation,
-#   Inc.
+#   Copyright (C) 2005, 2007-2014 Free Software Foundation, Inc.
 #   Written by Ralf Wildenhues, 2005
 #
 #   This file is part of GNU Libtool.
@@ -43,7 +42,7 @@ cat >main3.c <<EOF
 extern int a1(void), a2(void), a3(void);
 int main(void) { return a1() + a2() + a3() != 6; }
 EOF
-for i in 1 2 3; do 
+for i in 1 2 3; do
   echo "int a$i(void) { return $i; }" > a$i.c
   $LIBTOOL --mode=compile $CC $CPPFLAGS $CFLAGS -c main$i.c
   $LIBTOOL --mode=compile $CC $CPPFLAGS $CFLAGS -c a$i.c
@@ -83,7 +82,7 @@ cat >main3.cpp <<EOF
 extern int a1(void), a2(void), a3(void);
 int main(void) { return a1() + a2() + a3() != 6; }
 EOF
-for i in 1 2 3; do 
+for i in 1 2 3; do
   echo "int a$i(void) { return $i; }" > a$i.cpp
   $LIBTOOL --tag=CXX --mode=compile $CXX $CXXFLAGS -c main$i.cpp
   $LIBTOOL --tag=CXX --mode=compile $CXX $CXXFLAGS -c a$i.cpp
@@ -136,7 +135,7 @@ cat >main3.f <<EOF
       end
 EOF
 
-for i in 1 2 3; do 
+for i in 1 2 3; do
   cat >a$i.f <<EOF
       subroutine a$i(res)
       implicit none
@@ -196,7 +195,7 @@ cat >main3.f <<EOF
       end
 EOF
 
-for i in 1 2 3; do 
+for i in 1 2 3; do
   cat >a$i.f <<EOF
       subroutine a$i(res)
       implicit none
@@ -260,8 +259,16 @@ public class A$i {
 };
 EOF
 
-  $LIBTOOL --tag=GCJ --mode=compile $GCJ $GCJFLAGS -c foo$i.java
-  $LIBTOOL --tag=GCJ --mode=compile $GCJ $GCJFLAGS -c A$i.java
+  # Workaround http://gcc.gnu.org/bugzilla/show_bug.cgi?id=42143
+  # Some 4.3.x and 4.4.x releases of gcj insert a spurious dummy symbol
+  # into every object file when compiling directly from .java to .o, so
+  # we have to make .class files first, and then compile those to native
+  # objects:
+  $GCJ $GCJFLAGS -C foo$i.java
+  $GCJ $GCJFLAGS -C A$i.java
+
+  $LIBTOOL --tag=GCJ --mode=compile $GCJ $GCJFLAGS -c foo$i.class
+  $LIBTOOL --tag=GCJ --mode=compile $GCJ $GCJFLAGS -c A$i.class
   $LIBTOOL --tag=GCJ --mode=link $GCJ $GCJFLAGS $LDFLAGS -o liba$i.la A$i.lo
 done
 AT_CHECK([$LIBTOOL --tag=GCJ --mode=link $GCJ $GCJFLAGS $LDFLAGS -o liba12.la liba1.la liba2.la -rpath /notexist],

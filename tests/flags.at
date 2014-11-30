@@ -1,6 +1,6 @@
 # flags.at -- libtool passing of flags             -*- Autotest -*-
 #
-#   Copyright (C) 2009, 2010 Free Software Foundation, Inc.
+#   Copyright (C) 2009-2014 Free Software Foundation, Inc.
 #
 #   This file is part of GNU Libtool.
 #
@@ -59,7 +59,7 @@ compile="$GCJ $GCJFLAGS" link="$GCJ $GCJFLAGS $LDFLAGS" source=a.java
 ])
 
 # Linker flags are not passed to the archiver, so don't test static libraries.
-if $LIBTOOL --features | grep 'enable shared libraries'; then
+if $LIBTOOL --features | $GREP 'enable shared libraries'; then
   library_and_module='library.la "module.la -module -avoid-version"'
 else
   library_and_module=
@@ -70,7 +70,7 @@ eval "`$LIBTOOL --tag=lt_tag --config | $EGREP '^(wl|archive_cmds)='`"
 AT_CHECK([$LIBTOOL --tag=lt_tag --mode=compile $compile -c $source],
 	 [], [ignore], [ignore])
 
-# Linker flags are prefixed with ${wl} iff they are passed to the
+# Linker flags are prefixed with $wl iff they are passed to the
 # compiler driver, instead of directly to the linker.
 case $archive_cmds in
 *\$LD*\$linker_flags*) maybe_wl= compiler_flags_in_liblink=false ;;

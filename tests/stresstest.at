@@ -1,6 +1,6 @@
 # stresstest.at -- Libtool stress test                       -*- Autotest -*-
 #
-#   Copyright (C) 2005, 2006, 2007, 2008 Free Software Foundation, Inc.
+#   Copyright (C) 2005-2008, 2011-2014 Free Software Foundation, Inc.
 #   Written by Ralf Wildenhues, 2005
 #
 #   This file is part of GNU Libtool.
@@ -29,7 +29,7 @@
 
 AT_BANNER([Libtool stress test.])
 AT_SETUP([Link option thorough search test])
-AT_KEYWORDS([libtool])
+AT_KEYWORDS([libtool expensive])
 eval `$LIBTOOL --config | $EGREP '^(CC|objdir|allow_undefined_flag)='`
 
 mkdir sub sub2 sub3 2>/dev/null
@@ -90,18 +90,18 @@ int ab = 1;
 
 AT_DATA(main.c,
 [[
-#if defined(LIBA_DLL_IMPORT)
-#  if defined(_WIN32) || defined(WIN32) || defined(__CYGWIN__)
+#if defined LIBA_DLL_IMPORT
+#  if defined _WIN32 || defined WIN32 || defined __CYGWIN__
 #    define LIBA_SCOPE extern __declspec(dllimport)
-#    if defined(_MSC_VER)
+#    if defined _MSC_VER
 #      define LIBA_SCOPE_VAR LIBA_SCOPE
 #    endif
 #  endif
 #endif
-#if !defined(LIBA_SCOPE)
+#if !defined LIBA_SCOPE
 #  define LIBA_SCOPE extern
 #endif
-#if !defined(LIBA_SCOPE_VAR)
+#if !defined LIBA_SCOPE_VAR
 #  define LIBA_SCOPE_VAR extern
 #endif
 #ifdef __cplusplus
@@ -134,18 +134,18 @@ int main(void)
 
 AT_DATA(dlself.c,
 [[
-#if defined(LIBA_DLL_IMPORT)
-#  if defined(_WIN32) || defined(WIN32) || defined(__CYGWIN__)
+#if defined LIBA_DLL_IMPORT
+#  if defined _WIN32 || defined WIN32 || defined __CYGWIN__
 #    define LIBA_SCOPE extern __declspec(dllimport)
-#    if defined(_MSC_VER)
+#    if defined _MSC_VER
 #      define LIBA_SCOPE_VAR LIBA_SCOPE
 #    endif
 #  endif
 #endif
-#if !defined(LIBA_SCOPE)
+#if !defined LIBA_SCOPE
 #  define LIBA_SCOPE extern
 #endif
-#if !defined(LIBA_SCOPE_VAR)
+#if !defined LIBA_SCOPE_VAR
 #  define LIBA_SCOPE_VAR extern
 #endif
 #ifdef __cplusplus
@@ -264,7 +264,7 @@ do
 	         [0],[ignore],[ignore])
 	for st in '' '-static' '-no-install'
 	do
-	  # if -static is not passed, and the library is shared, then we have
+	  # if '-static' is not passed, and the library is shared, then we have
 	  # to use -DLIBA_DLL_IMPORT, thus main.lo (and not main-static.lo).
 	  case $st,$l3 in
 	  -static,*) mst=-static ;;
@@ -273,12 +273,12 @@ do
 	  esac
 
 	  LT_AT_CHECK([$LIBTOOL --mode=link $CC $CFLAGS $LDFLAGS $st -o "$rel"main$EXEEXT "$rel"main$mst.lo "$rel"sub2/liba.la],
-	  	   [0],[ignore],[ignore])
+		   [0],[ignore],[ignore])
 	  LT_AT_EXEC_CHECK([./main],[0])
 	  for l10 in '' '-export-symbols dlselfsyms'
 	  do
 	    LT_AT_CHECK([$LIBTOOL --mode=link $CC $CFLAGS $LDFLAGS $st -o "$rel"sub3/dlself$EXEEXT "$rel"sub3/dlself$mst.lo "$rel"sub2/liba.la sub/b.lo -dlopen self $l10],
-	    	     [0],[ignore],[ignore])
+		     [0],[ignore],[ignore])
 	    LT_AT_EXEC_CHECK([./sub3/dlself],[0])
 	  done
 	done

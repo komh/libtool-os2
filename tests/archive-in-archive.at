@@ -1,6 +1,6 @@
 # dmacks.at --  test for dmacks bug  -*- Autotest -*-
 #
-#   Copyright (C) 2007, 2008, 2010 Free Software Foundation, Inc.
+#   Copyright (C) 2007-2008, 2010-2014 Free Software Foundation, Inc.
 #   Written by Peter O'Gorman, 2007
 #
 #   This file is part of GNU Libtool.
@@ -44,7 +44,7 @@ $LIBTOOL --mode=compile --tag=CC $CC $CPPFLAGS $CFLAGS -c -o foo.lo foo.c
 $LIBTOOL --mode=compile --tag=CC $CC $CPPFLAGS $CFLAGS -c -o bar.lo bar.c
 $LIBTOOL --mode=link --tag=CC --tag=disable-shared $CC $CFLAGS $LDFLAGS \
 -o libfoo.la foo.lo -version-info 1:0:0 -rpath $thisdir
-$LIBTOOL --mode=install cp libfoo.la $thisdir 
+$LIBTOOL --mode=install cp libfoo.la $thisdir
 eval `$EGREP '^(old_library)=' < libfoo.la`
 libfoo=$old_library
 AT_CHECK([$LIBTOOL --mode=link --tag=CC --tag=disable-shared $CC $CFLAGS $LDFLAGS \
@@ -53,7 +53,7 @@ AT_CHECK([$LIBTOOL --mode=link --tag=CC --tag=disable-shared $CC $CFLAGS $LDFLAG
 AT_CHECK([$LIBTOOL --mode=install cp libbar.la $thisdir], [], [ignore], [ignore])
 eval `$EGREP '^(old_library)=' < libbar.la`
 libbar=$old_library
-AT_CHECK([$AR -t $libbar | grep $libfoo],[1],[ignore],[ignore])
-AT_CHECK([$AR -t $libbar | grep foo.$OBJEXT],[],[ignore],[ignore])
-AT_CHECK([$AR -t $libbar | grep bar.$OBJEXT],[],[ignore],[ignore])
+AT_CHECK([$AR -t $libbar | $GREP $libfoo],[1],[ignore],[ignore])
+AT_CHECK([$AR -t $libbar | $GREP foo.$OBJEXT],[],[ignore],[ignore])
+AT_CHECK([$AR -t $libbar | $GREP bar.$OBJEXT],[],[ignore],[ignore])
 AT_CLEANUP

@@ -1,6 +1,6 @@
 # bindir.at -  Test the -bindir option
 #
-#   Copyright (C) 2009, 2010 Free Software Foundation, Inc.
+#   Copyright (C) 2009-2014 Free Software Foundation, Inc.
 #   Written by Dave Korn, 2009
 #
 #   This file is part of GNU Libtool.
@@ -24,7 +24,7 @@
 
 ####
 #  In this testcase, and in the chunk of code that makes use
-# of $bindir in ltmain.m4sh, we would very much have liked to
+# of $bindir in ltmain.in, we would very much have liked to
 # automatically decide which systems require dynamically-loaded
 # libraries to be installed to a directory in $PATH according
 # to the libtool properties that tell us that "the system provides
@@ -55,7 +55,7 @@
 #
 # So alas we punt for now, and just hardcode the relevant OSs that require
 # this functionality.  That's Cygwin, MinGW and CeGCC for now; see the case
-# statement in libtool.m4sh around where the 'tdlname' variable is set.
+# statement in ltmain.in around where the 'tdlname' variable is set.
 
 ####
 # First a simple test that we can build and run an executable with a couple of
@@ -64,7 +64,7 @@
 AT_SETUP([bindir basic lib test])
 
 bindirneeded=:
-case "$host_os" in
+case $host_os in
   cygwin*|mingw*|cegcc*)
     ;;
   *)
@@ -81,8 +81,8 @@ esac
 func_save_and_prepend_path ()
 {
   save_PATH=$PATH
-  if $bindirneeded ; then
-    PATH=$1:$PATH
+  if $bindirneeded; then
+    PATH=$1$PATH_SEPARATOR$PATH
   fi
   export PATH
 }
@@ -122,7 +122,7 @@ return 0;
 
 
 curdir=`pwd`
-eval "`$LIBTOOL --config | grep '^objdir='`"
+eval "`$LIBTOOL --config | $GREP '^objdir='`"
 
 AT_CHECK([$LIBTOOL --mode=compile --tag=CC $CC -c -o foo.lo $CPPFLAGS $CFLAGS foo.c],[0],[ignore],[ignore])
 AT_CHECK([$LIBTOOL --mode=compile --tag=CC $CC -c -o baz.lo $CPPFLAGS $CFLAGS baz.c],[0],[ignore],[ignore])
@@ -143,7 +143,7 @@ LT_AT_NOINST_EXEC_CHECK([./main])
 # Ensure libraries can be found on PATH, if we are on one
 # of the affected platforms, before testing the shared version.
 
-func_save_and_prepend_path $curdir/$objdir
+func_save_and_prepend_path "$curdir/$objdir"
 $bindirneeded && {
   LT_AT_NOINST_EXEC_CHECK([$objdir/main])
 }
@@ -173,7 +173,7 @@ AT_CLEANUP
 AT_SETUP([bindir install tests])
 
 bindirneeded=:
-case "$host_os" in
+case $host_os in
   cygwin*|mingw*|cegcc*)
     ;;
   *)
@@ -181,8 +181,8 @@ case "$host_os" in
     ;;
 esac
 
-eval "`$LIBTOOL --config | grep '^build_libtool_libs='`"
-AT_CHECK([test "$build_libtool_libs" = yes || exit 77])
+eval "`$LIBTOOL --config | $GREP '^build_libtool_libs='`"
+AT_CHECK([test yes = "$build_libtool_libs" || exit 77])
 
 ####
 # These routines save the PATH before a test and restore it after,
@@ -193,8 +193,8 @@ AT_CHECK([test "$build_libtool_libs" = yes || exit 77])
 func_save_and_prepend_path ()
 {
   save_PATH=$PATH
-  if $bindirneeded ; then
-    PATH=$1:$PATH
+  if $bindirneeded; then
+    PATH=$1$PATH_SEPARATOR$PATH
   fi
   export PATH
 }
@@ -257,7 +257,7 @@ for libdir in \
 	$curdir/usr/lib/ \
 	$curdir/usr/lib \
 	$curdir/baz \
-	$curdir/baz/lib/ ;
+	$curdir/baz/lib/;
 do
 
   # Do a basic install with no -bindir option for reference.  We use the sbin/
@@ -276,15 +276,13 @@ do
   # simplify this check by taking advantage of the fact that if it's a DLL,
   # it has to go in bindir, so we'll not check for both forms in libdir.
   if $bindirneeded; then
-    AT_CHECK([test -f $libdir/../bin/???foo-0.dll || ls $libdir/../bin/*foo*0*], [], [ignore], [ignore])
+    AT_CHECK([test -f "$libdir"/../bin/???foo-0.dll || ls "$libdir"/../bin/*foo*0*], [], [ignore], [ignore])
   else
     AT_CHECK([ls $libdir/*foo*], [], [ignore], [ignore])
   fi
 
   # And that it can be executed.
-  extrapath=
-  $bindirneeded && extrapath=$libdir/../bin
-  func_save_and_prepend_path $extrapath
+  func_save_and_prepend_path "$libdir/../bin"
   LT_AT_EXEC_CHECK([$curdir/sbin/main$EXEEXT], [0], [ignore], [ignore], [])
   func_restore_path
 
@@ -295,7 +293,7 @@ do
 	$curdir/usr/lib/bin \
 	$curdir/usr/bin/ \
 	$curdir/usr/bin \
-	/tmp/foo/bar ;
+	/tmp/foo/bar;
   do
 
     # Clear any old stuff out before we install.  Because bindir
@@ -335,27 +333,25 @@ do
     # Recreate directories (bindir already done) and install.
     AS_MKDIR_P($libdir)
     AS_MKDIR_P($curdir/sbin)
-    AT_CHECK([$LIBTOOL --mode=install $lt_INSTALL libfoo.la $libdir], [], [ignore], [ignore])
-    AT_CHECK([$LIBTOOL --mode=install $lt_INSTALL main$EXEEXT $curdir/sbin/main$EXEEXT], [], [ignore], [ignore])
+    AT_CHECK([$LIBTOOL --mode=install $lt_INSTALL libfoo.la "$libdir"], [], [ignore], [ignore])
+    AT_CHECK([$LIBTOOL --mode=install $lt_INSTALL main$EXEEXT "$curdir/sbin/main$EXEEXT"], [], [ignore], [ignore])
 
     # Ensure it went to bindir rather than default dir this time.
     if $bindirneeded; then
-      AT_CHECK([test -f $bindir/???foo-0.dll || ls $bindir/*foo*0*], [], [ignore], [ignore])
+      AT_CHECK([test -f "$bindir"/???foo-0.dll || ls "$bindir"/*foo*0*], [], [ignore], [ignore])
     else
-      AT_CHECK([ls $libdir/*foo*], [], [ignore], [ignore])
+      AT_CHECK([ls "$libdir"/*foo*], [], [ignore], [ignore])
     fi
 
     # And that it can be executed.
-    extrapath=
-    $bindirneeded && extrapath=$bindir
-    func_save_and_prepend_path $extrapath
+    func_save_and_prepend_path "$bindir"
     LT_AT_EXEC_CHECK([$curdir/sbin/main$EXEEXT], [0], [ignore], [ignore], [])
     func_restore_path
 
     # Clean up if we made a temp dir.  Subdirs under our testdir get rm'd
     # and recreated at the top of the loop.  Securely created subdirs under
     # /tmp get created precisely once and rm'd when we're done with them.
-    if test ! -z "$tmp" ; then
+    if test ! -z "$tmp"; then
       rm -rf "$tmp"
     fi
 

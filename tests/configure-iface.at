@@ -1,6 +1,6 @@
 # configure-iface.at -- test ltdl configure interface         -*- Autotest -*-
 #
-#   Copyright (C) 2007, 2008 Free Software Foundation, Inc.
+#   Copyright (C) 2007-2008, 2011-2014 Free Software Foundation, Inc.
 #   Written by Gary V. Vaughan, 2007
 #
 #   This file is part of GNU Libtool.
@@ -64,7 +64,7 @@ main (void)
       }
     else
       {
-        fprintf (stderr, "function `f' not found: %s\n", lt_dlerror ());
+        fprintf (stderr, "function 'f' not found: %s\n", lt_dlerror ());
         ++errors;
       }
   }
@@ -107,7 +107,7 @@ _LT_AT_LTDL_SETUP
 AT_DATA([configure.ac],
 [[AC_INIT([installable-ltdl-demo], ]AT_PACKAGE_VERSION[, ]AT_PACKAGE_BUGREPORT[)
 AC_CONFIG_AUX_DIR([libltdl/config])
-AC_CONFIG_MACRO_DIR([libltdl/m4])
+AC_CONFIG_MACRO_DIRS([libltdl/m4])
 AC_CONFIG_HEADERS([config.h:config.hin])
 LT_CONFIG_LTDL_DIR([libltdl])
 AM_INIT_AUTOMAKE([foreign])
@@ -144,9 +144,9 @@ prefix=`pwd`/_inst
 LT_AT_BOOTSTRAP([--ltdl], [-I libltdl/m4], [], [--add-missing], [],
         [--with-included-ltdl --prefix=$prefix], [all install])
 
-# TODO: Check that the installed program `main' is linked against our libltdl
-AT_CHECK([test -f $prefix/lib/libltdl.la])
-AT_CHECK([test -f $prefix/include/ltdl.h])
+# TODO: Check that the installed program 'main' is linked against our libltdl
+AT_CHECK([test -f "$prefix/lib/libltdl.la"])
+AT_CHECK([test -f "$prefix/include/ltdl.h"])
 
 # Check that main is rebuilt if libltdl.la is newer
 rm -f libltdl/libltdl.la
@@ -175,14 +175,14 @@ LT_AT_MAKE([all install])
 # Remove build files
 rm -rf ltdl/
 
-AT_CHECK([test -f $prefix/lib/libltdl.la])
-AT_CHECK([test -f $prefix/include/ltdl.h])
+AT_CHECK([test -f "$prefix/lib/libltdl.la"])
+AT_CHECK([test -f "$prefix/include/ltdl.h"])
 
 _LT_AT_LTDL_SETUP
 
 AT_DATA([configure.ac],
 [[AC_INIT([configure-iface-demo], ]AT_PACKAGE_VERSION[, ]AT_PACKAGE_BUGREPORT[)
-AC_CONFIG_MACRO_DIR([_inst/aclocal])
+AC_CONFIG_MACRO_DIRS([_inst/aclocal])
 AC_CONFIG_HEADERS([config.h:config.hin])
 AM_INIT_AUTOMAKE([foreign])
 AC_PROG_CC
@@ -229,7 +229,7 @@ LT_AT_BOOTSTRAP([], [-I _inst/aclocal], [], [--add-missing], [],
 	[all])
 
 ## TODO: portable ldd check for correct libltdl
-## Currently, this test doesn't fail if `main' ends up linking against a
+## Currently, this test doesn't fail if 'main' ends up linking against a
 ## previously installed system libltdl.
 LT_AT_NOINST_EXEC_CHECK([./main], [-dlopen libmodule.la], [], [expout], [])
 
@@ -248,7 +248,7 @@ _LT_AT_LTDL_SETUP
 AT_DATA([configure.ac],
 [[AC_INIT([configure-iface-demo], ]AT_PACKAGE_VERSION[, ]AT_PACKAGE_BUGREPORT[)
 AC_CONFIG_AUX_DIR([libltdl/config])
-AC_CONFIG_MACRO_DIR([libltdl/m4])
+AC_CONFIG_MACRO_DIRS([libltdl/m4])
 AC_CONFIG_HEADERS([config.h:config.hin])
 LT_CONFIG_LTDL_DIR([libltdl])
 AM_INIT_AUTOMAKE([foreign])
@@ -286,7 +286,7 @@ LT_AT_BOOTSTRAP([--ltdl], [-I libltdl/m4], [], [--add-missing], [],
 AT_CHECK([test -f libltdl/libltdlc.la])
 
 ## TODO: portable ldd check for correct libltdl
-## Currently, this test doesn't fail if `main' ends up linking against a
+## Currently, this test doesn't fail if 'main' ends up linking against a
 ## previously installed system libltdl.
 LT_AT_NOINST_EXEC_CHECK([./main], [-dlopen libmodule.la], [], [expout], [])
 
@@ -320,7 +320,7 @@ print-ltdl:
 
 LT_AT_BOOTSTRAP([--ltdl], [-I libltdl/m4], [ignore], [ignore], [], [], [ignore])
 AT_CHECK([$MAKE print-ltdl], [], [stdout], [ignore])
-AT_CHECK([grep libltdl/libltdlc.la stdout], [], [ignore])
+AT_CHECK([$GREP libltdl/libltdlc.la stdout], [], [ignore])
 
 AT_CLEANUP
 

@@ -1,6 +1,6 @@
 # nocase.at --  test for nocase lib search  -*- Autotest -*-
 #
-#   Copyright (C) 2010 Free Software Foundation, Inc.
+#   Copyright (C) 2010-2014 Free Software Foundation, Inc.
 #   Written by Peter Rosin, 2007
 #
 #   This file is part of GNU Libtool.
@@ -28,7 +28,7 @@ AT_KEYWORDS([libtool])
 
 eval `$LIBTOOL --config | $EGREP '^(want_nocaseglob|file_magic_glob)='`
 
-AT_CHECK([test "$want_nocaseglob" != yes && ]dnl
+AT_CHECK([test yes != "$want_nocaseglob" && ]dnl
          [test -z "$file_magic_glob" && exit 77],
 	  [1], [ignore], [ignore])
 

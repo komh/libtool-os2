@@ -1,6 +1,7 @@
 # fail.at -- test that libtool really fail when it should     -*- Autotest -*-
 #
-#   Copyright (C) 2005, 2008, 2009 Free Software Foundation, Inc.
+#   Copyright (C) 2005, 2008-2009, 2011-2014 Free Software Foundation,
+#   Inc.
 #   Written by Ralf Wildenhues, 2005
 #
 #   This file is part of GNU Libtool.
@@ -70,7 +71,7 @@ case $pic_mode in default | no)
 esac
 
 # program creation failure.
-# We can't rely on `main' not being present: the QNX linker
+# We can't rely on 'main' not being present: the QNX linker
 # won't error out in that case, although the resulting binary won't work.
 # So we provoke a link failure due to an unresolved symbol, and require
 # libtool to fail only if the link without libtool would have failed, too.
@@ -102,8 +103,8 @@ case $build_libtool_libs in yes)
   $LIBTOOL --mode=compile $CC $CPPFLAGS $CFLAGS -c c.c
   (
     . ./c.lo
-    test "$pic_object" != none && echo choke me >"$pic_object"
-    test "$non_pic_object" != none && echo choke me >"$non_pic_object"
+    test none = "$pic_object"     || echo choke me >"$pic_object"
+    test none = "$non_pic_object" || echo choke me >"$non_pic_object"
   )
   FAIL_CHECK([$LIBTOOL --mode=link $CC $CFLAGS $LDFLAGS -o liba.la a.lo b.lo c.lo -rpath /foo])
   AT_CHECK([test -f liba.la], [1])

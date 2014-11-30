@@ -1,6 +1,6 @@
 # ltdl-libdir.at -- test libltdl functionality             -*- Autotest -*-
 #
-#   Copyright (C) 2010 Free Software Foundation, Inc.
+#   Copyright (C) 2010-2014 Free Software Foundation, Inc.
 #   This file is part of GNU Libtool.
 #
 # GNU Libtool is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@ AT_SETUP([libdir of installed modules])
 AT_KEYWORDS([libltdl])
 
 # This test requires shared library support.
-AT_CHECK([$LIBTOOL --features | grep 'enable shared libraries' || exit 77],
+AT_CHECK([$LIBTOOL --features | $GREP 'enable shared libraries' || exit 77],
 	 [], [ignore])
 
 # With MinGW, try Windows-style paths only.

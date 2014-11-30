@@ -1,6 +1,7 @@
 # duplicate_members.at -- duplicate members in archive tests  -*- Autotest -*-
 
-#   Copyright (C) 2005, 2007, 2008, 2009 Free Software Foundation, Inc.
+#   Copyright (C) 2005, 2007-2009, 2011-2014 Free Software Foundation,
+#   Inc.
 #   Written by Alexandre Oliva & Peter O'Gorman, 2005
 #
 #   This file is part of GNU Libtool.
@@ -26,7 +27,7 @@ AT_SETUP([duplicate members in archive tests])
 AT_KEYWORDS([libtool])
 
 # we don't want to use whole_archive_flag_spec, even if available
-sed -e 's|^whole_archive_flag_spec=.*|whole_archive_flag_spec=|g' < $LIBTOOL > libtool
+$SED -e 's|^whole_archive_flag_spec=.*|whole_archive_flag_spec=|g' < $LIBTOOL > libtool
 
 chmod +x ./libtool
 LIBTOOL=./libtool

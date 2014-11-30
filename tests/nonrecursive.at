@@ -1,6 +1,7 @@
 # nonrecursive.at -- test nonrecursive Automake Libltdl       -*- Autotest -*-
 #
-#   Copyright (C) 2005, 2008, 2009 Free Software Foundation, Inc.
+#   Copyright (C) 2005, 2008-2009, 2011-2014 Free Software Foundation,
+#   Inc.
 #   Written by Gary V. Vaughan, 2005
 #
 #   This file is part of GNU Libtool.
@@ -32,7 +33,7 @@ m4_pushdef([_LT_AT_LTDL_SETUP],
 [[AC_INIT([subdirectory-demo], ]AT_PACKAGE_VERSION[, ]AT_PACKAGE_BUGREPORT[)
 LT_CONFIG_LTDL_DIR([ltdl])
 AC_CONFIG_AUX_DIR([ltdl/config])
-AC_CONFIG_MACRO_DIR([ltdl/m4])
+AC_CONFIG_MACRO_DIRS([ltdl/m4])
 AC_CONFIG_LIBOBJ_DIR([ltdl])
 AC_CONFIG_HEADERS([config.h:config.hin])
 AM_INIT_AUTOMAKE([foreign subdir-objects])
@@ -62,7 +63,7 @@ EXTRA_DIST		=
 CLEANFILES		=
 MOSTLYCLEANFILES	=
 
-include ltdl/Makefile.inc
+include ltdl/ltdl.mk
 
 foo_la_LDFLAGS		= -module -avoid-version -no-undefined
 foo_la_SOURCES		= foo.c
@@ -83,7 +84,7 @@ LT_AT_LIBTOOLIZE([--ltdl])
 AT_CHECK([if test -f ltdl/configure.ac; then false; fi])
 
 # Support vanilla autoconf-2.59 & automake-1.9.6
-for file in argz.c lt__dirent.c lt__strl.c; do
+for file in lt__argz.c lt__dirent.c lt__strl.c; do
   cp ltdl/$file $file
 done
 
@@ -107,7 +108,7 @@ LT_AT_LIBTOOLIZE([--copy --ltdl])
 AT_CHECK([if test -f ltdl/configure.ac; then false; fi])
 
 # Support vanilla autoconf-2.59 & automake-1.9.6
-for file in argz.c lt__dirent.c lt__strl.c; do
+for file in lt__argz.c lt__dirent.c lt__strl.c; do
   cp ltdl/$file $file
 done
 
@@ -133,15 +134,15 @@ LT_AT_LIBTOOLIZE([--copy --ltdl])
 AT_CHECK([if test -f ltdl/configure.ac; then false; fi])
 
 # Support vanilla autoconf-2.59 & automake-1.9.6
-for file in argz.c lt__dirent.c lt__strl.c; do
+for file in lt__argz.c lt__dirent.c lt__strl.c; do
   cp ltdl/$file $file
 done
 
 LT_AT_BOOTSTRAP([ignore], [-I ltdl/m4], [], [--add-missing --copy],
 	[], [--enable-ltdl-install --prefix=$prefix], [all install $tst_dist])
 
-AT_CHECK([test -f $prefix/lib/libltdl.la])
-AT_CHECK([test -f $prefix/include/ltdl.h])
+AT_CHECK([test -f "$prefix/lib/libltdl.la"])
+AT_CHECK([test -f "$prefix/include/ltdl.h"])
 
 AT_CLEANUP
 

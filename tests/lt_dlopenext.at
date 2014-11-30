@@ -1,6 +1,6 @@
 # lt_dlopenext.at -- test libltdl functionality             -*- Autotest -*-
 #
-#   Copyright (C) 2009, 2010 Free Software Foundation, Inc.
+#   Copyright (C) 2009-2014 Free Software Foundation, Inc.
 #   This file is part of GNU Libtool.
 #
 # GNU Libtool is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@ AT_SETUP([lt_dlopenext error messages])
 AT_KEYWORDS([libltdl])
 
 # This test requires shared library support.
-AT_CHECK([$LIBTOOL --features | grep 'enable shared libraries' || exit 77],
+AT_CHECK([$LIBTOOL --features | $GREP 'enable shared libraries' || exit 77],
 	 [], [ignore])
 
 prefix=`pwd`/inst
@@ -186,7 +186,7 @@ dlerrordup (char *errormsg)
 # Skip this test when called from:
 #    make distcheck DISTCHECK_CONFIGURE_FLAGS=--disable-ltdl-install
 AT_CHECK([case $LIBLTDL in #(
- */_inst/lib/*) test -f $LIBLTDL || (exit 77) ;;
+ */_inst/lib/*) test -f "$LIBLTDL" || (exit 77) ;;
 esac], [], [ignore])
 
 CPPFLAGS="$LTDLINCL $CPPFLAGS"
@@ -219,22 +219,22 @@ eval shared_ext=\"$shrext_cmds\"
 if test -n "$shared_ext"; then
   have_lafile="with without"
 else
-  have="with"
+  have=with
 fi
 
-if test "$shlibpath_var" = PATH; then
+if test PATH = "$shlibpath_var"; then
   $unset shlibpath_var || shlibpath_var=
 fi
 
 for lafile in $have_lafile; do
-  if test $lafile = without; then
+  if test without = "$lafile"; then
     rm $libdir/simple-module.la
   fi
 
   for dir in inst/lib "$libdir"; do
     LT_AT_EXEC_CHECK([./ltdl-loader], [], [stdout], [ignore],
 		     [$dir/simple-module World])
-    AT_CHECK([grep "Hello, World" stdout], [], [ignore])
+    AT_CHECK([$GREP "Hello, World" stdout], [], [ignore])
 
     for var in MODULE_PATH LTDL_LIBRARY_PATH $shlibpath_var
     do
@@ -242,7 +242,7 @@ for lafile in $have_lafile; do
       export $var
       LT_AT_EXEC_CHECK([./ltdl-loader], [], [stdout], [ignore],
 		       [simple-module World])
-      AT_CHECK([grep "Hello, World" stdout], [], [ignore])
+      AT_CHECK([$GREP "Hello, World" stdout], [], [ignore])
       $unset $var || eval $var=
     done
   done

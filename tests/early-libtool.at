@@ -1,6 +1,6 @@
 # early-libtool.at -- early libtool script generation         -*- Autotest -*-
 
-#   Copyright (C) 2005, 2006, 2007, 2008 Free Software Foundation, Inc.
+#   Copyright (C) 2005-2008, 2011-2014 Free Software Foundation, Inc.
 #   Written by Gary V. Vaughan, 2005
 #
 #   This file is part of GNU Libtool.
@@ -33,7 +33,7 @@ AT_SETUP([config.status])
 
 AT_DATA([configure.ac],
 [[AC_INIT([libtool-demo], ]]AT_PACKAGE_VERSION[[, ]]AT_PACKAGE_BUGREPORT[[)
-AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_MACRO_DIRS([m4])
 LT_INIT
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
@@ -112,8 +112,8 @@ LT_AT_CONFIGURE
 LT_AT_MAKE
 
 LT_AT_EXEC_CHECK([./hell], [0], [stdout])
-AT_CHECK([grep 'Welcome to GNU Hell' stdout], [], [ignore])
-AT_CHECK([grep 'This is not GNU Hello.' stdout],
+AT_CHECK([$GREP 'Welcome to GNU Hell' stdout], [], [ignore])
+AT_CHECK([$GREP 'This is not GNU Hello.' stdout],
 	 [], [ignore])
 
 AT_CLEANUP
@@ -127,7 +127,7 @@ AT_SETUP([config.lt])
 
 AT_DATA([configure.ac],
 [[AC_INIT([libtool-demo], ]]AT_PACKAGE_VERSION[[, ]]AT_PACKAGE_BUGREPORT[[)
-AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_MACRO_DIRS([m4])
 LT_INIT
 LT_OUTPUT
 
@@ -219,8 +219,8 @@ LT_AT_CONFIGURE
 LT_AT_MAKE
 
 LT_AT_EXEC_CHECK([./hell], [0], [stdout])
-AT_CHECK([grep 'Welcome to GNU Hell' stdout], [], [ignore])
-AT_CHECK([grep 'This is not GNU Hello.' stdout], [], [ignore])
+AT_CHECK([$GREP 'Welcome to GNU Hell' stdout], [], [ignore])
+AT_CHECK([$GREP 'This is not GNU Hello.' stdout], [], [ignore])
 
 # Make sure config.status --recheck updates the libtool script
 rm libtool

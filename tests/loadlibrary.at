@@ -1,6 +1,6 @@
 # loadlibrary.at -- test loadlibrary functionality          -*- Autotest -*-
 #
-#   Copyright (C) 2010 Free Software Foundation, Inc.
+#   Copyright (C) 2010-2014 Free Software Foundation, Inc.
 #   This file is part of GNU Libtool.
 #
 # GNU Libtool is free software; you can redistribute it and/or
@@ -215,7 +215,7 @@ barsym (void)
 # Skip this test when called from:
 #    make distcheck DISTCHECK_CONFIGURE_FLAGS=--disable-ltdl-install
 AT_CHECK([case $LIBLTDL in #(
- */_inst/lib/*) test -f $LIBLTDL || (exit 77) ;;
+ */_inst/lib/*) test -f "$LIBLTDL" || (exit 77) ;;
 esac], [], [ignore])
 
 CPPFLAGS="$LTDLINCL $CPPFLAGS"

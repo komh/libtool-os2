@@ -1,6 +1,6 @@
 # search-path.at -- test sys_lib_search_path_spec             -*- Autotest -*-
 #
-#   Copyright (C) 2006, 2008, 2010 Free Software Foundation, Inc.
+#   Copyright (C) 2006, 2008, 2010-2014 Free Software Foundation, Inc.
 #
 #   This file is part of GNU Libtool.
 #
@@ -77,8 +77,8 @@ HCURSOR get_cursor (void)
 }
 ]])
 
-eval "`$LIBTOOL --config | grep '^build_libtool_libs='`"
-AT_CHECK([test "$build_libtool_libs" = yes || exit 77])
+eval "`$LIBTOOL --config | $GREP '^build_libtool_libs='`"
+AT_CHECK([test yes = "$build_libtool_libs" || exit 77])
 
 AT_CHECK([$LIBTOOL --mode=compile --tag=CC \
 	  $CC $CPPFLAGS $CFLAGS -o gc.lo -c gc.c || exit 77],
@@ -92,6 +92,6 @@ AT_CHECK([$LIBTOOL --mode=link --tag=CC --tag=disable-static \
 
 # If -luser32 was found, then libtool will build a shared library,
 # otherwise libtool will fall back to creating a static library.
-AT_CHECK([grep old_library=\'\' libgc.la], [], [ignore])
+AT_CHECK([$GREP old_library=\'\' libgc.la], [], [ignore])
 
 AT_CLEANUP

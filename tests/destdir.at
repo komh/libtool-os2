@@ -1,6 +1,6 @@
 # destdir.at -- test various DESTDIR issues                   -*- Autotest -*-
 
-#   Copyright (C) 2006, 2007 Free Software Foundation, Inc.
+#   Copyright (C) 2006-2007, 2011-2014 Free Software Foundation, Inc.
 #   Written by Ralf Wildenhues, 2006
 #
 #   This file is part of GNU Libtool.
@@ -27,7 +27,7 @@ AT_BANNER([DESTDIR tests])
 # Common setup for the next few tests.
 m4_pushdef([_LT_DIRSETUP],
 [# DESTDIR installs do not work with relink at install time.
-AT_XFAIL_IF([eval `$LIBTOOL --config | grep '^fast_install='`
+AT_XFAIL_IF([eval `$LIBTOOL --config | $GREP '^fast_install='`
            case $fast_install in no) :;; *) false;; esac])
 LDFLAGS="$LDFLAGS -no-undefined"
 if test -n "$we_are_on_a_safe_system"; then # let's read shorter cmdlines.
@@ -119,7 +119,7 @@ for lib in a1dep a2dep a; do
   echo "int this_should_not_be_linked_against () { return 0; }" > $lib.c
   $LIBTOOL --mode=compile $CC $CPPFLAGS $CFLAGS -c $lib.c
   # Note the rpath argument includes $DESTDIR: the installed false libs
-  # should be functional (i.e., not need `libtool --mode=finish').
+  # should be functional (i.e., not need 'libtool --mode=finish').
   $LIBTOOL --mode=link $CC $CFLAGS $LDFLAGS -o lib$lib.la $lib.lo -rpath $DESTDIR$ldir
   $LIBTOOL --mode=install cp lib$lib.la $DESTDIR$ldir/lib$lib.la
 done
@@ -127,7 +127,7 @@ done
 LT_AT_EXEC_CHECK([$bindir/m$EXEEXT])
 
 # TODO: make this more portable:
-if test "$OBJDUMP" != false && ($OBJDUMP -p $bindir/m$EXEEXT) >/dev/null 2>&1; then
+if test false != "$OBJDUMP" && ($OBJDUMP -p $bindir/m$EXEEXT) >/dev/null 2>&1; then
   AT_CHECK([$OBJDUMP -p $bindir/m$EXEEXT | $EGREP -i "R(UN)?PATH.*$DESTDIR"], [1])
   . $libdir/liba.la
   set x $library_names

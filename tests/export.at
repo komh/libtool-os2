@@ -1,6 +1,6 @@
 # export.at -- test symbol exports                           -*- Autotest -*-
 
-#   Copyright (C) 2007, 2008 Free Software Foundation, Inc.
+#   Copyright (C) 2007-2008, 2011-2014 Free Software Foundation, Inc.
 #   Written by Ralf Wildenhues, 2007
 #
 #   This file is part of GNU Libtool.
@@ -25,9 +25,9 @@
 AT_SETUP([Export test])
 AT_KEYWORDS([libtool])
 
-AT_CHECK([$LIBTOOL --features | grep 'disable shared libraries' && (exit 77)],
+AT_CHECK([$LIBTOOL --features | $GREP 'disable shared libraries' && (exit 77)],
 	 [1], [ignore])
-AT_CHECK([eval `$LIBTOOL --config | sed -n '/^archive_expsym_cmds=/,/^$/p'`
+AT_CHECK([eval `$LIBTOOL --config | $SED -n '/^archive_expsym_cmds=/,/^$/p'`
 	  test -n "$archive_expsym_cmds" || echo false >can-hide
 	  case $archive_expsym_cmds in
 	  *-retain-symbols-file*) echo false >can-hide ;;
@@ -103,18 +103,18 @@ AT_DATA(main.c,
  * For users, it's best to realize that they should not provide any
  * non-function API at all.
  */
-#if defined(LIBA_DLL_IMPORT)
-#  if defined(_WIN32) || defined(WIN32) || defined(__CYGWIN__)
+#if defined LIBA_DLL_IMPORT
+#  if defined _WIN32 || defined WIN32 || defined __CYGWIN__
 #    define LIBA_SCOPE extern __declspec(dllimport)
-#    if defined(_MSC_VER)
+#    if defined _MSC_VER
 #      define LIBA_SCOPE_VAR LIBA_SCOPE
 #    endif
 #  endif
 #endif
-#if !defined(LIBA_SCOPE)
+#if !defined LIBA_SCOPE
 #  define LIBA_SCOPE extern
 #endif
-#if !defined(LIBA_SCOPE_VAR)
+#if !defined LIBA_SCOPE_VAR
 #  define LIBA_SCOPE_VAR extern
 #endif
 #ifdef __cplusplus

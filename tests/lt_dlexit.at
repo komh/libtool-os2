@@ -1,6 +1,6 @@
 # lt_dlexit.at -- test libltdl functionality                  -*- Autotest -*-
 #
-#   Copyright (C) 2007, 2008, 2010 Free Software Foundation, Inc.
+#   Copyright (C) 2007-2008, 2010-2014 Free Software Foundation, Inc.
 #   Written by Dave Brolley & Ralf Wildenhues, 2007
 #
 #   This file is part of GNU Libtool.
@@ -61,11 +61,11 @@ xdlsymtest (lt_dlhandle handle, const char *func, const char *var)
   pfun_T pf = (pfun_T) lt_dlsym (handle, func);
   pvar_T pv = (pvar_T) lt_dlsym (handle, var);
   if (pf == NULL) {
-    fprintf (stderr, "function `%s' not found\n", func);
+    fprintf (stderr, "function '%s' not found\n", func);
     return 1;
   }
   if (pv == NULL) {
-    fprintf (stderr, "variable `%s' not found\n", var);
+    fprintf (stderr, "variable '%s' not found\n", var);
     return 1;
   }
   return (*pf) (*pv);
@@ -139,7 +139,7 @@ int vb1 = 3;
 # Skip this test when called from:
 #    make distcheck DISTCHECK_CONFIGURE_FLAGS=--disable-ltdl-install
 AT_CHECK([case $LIBLTDL in #(
- */_inst/lib/*) test -f $LIBLTDL || (exit 77) ;;
+ */_inst/lib/*) test -f "$LIBLTDL" || (exit 77) ;;
 esac], [], [ignore])
 
 CPPFLAGS="$LTDLINCL $CPPFLAGS"
