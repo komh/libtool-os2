@@ -1,5 +1,5 @@
 # DO NOT EDIT! GENERATED AUTOMATICALLY!
-# Copyright (C) 2002-2014 Free Software Foundation, Inc.
+# Copyright (C) 2002-2015 Free Software Foundation, Inc.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -237,6 +237,7 @@ AC_DEFUN([GL_FILE_LIST], [
   build-aux/useless-if-before-free
   build-aux/vc-list-files
   doc/gendocs_template
+  doc/gendocs_template_min
   m4/00gnulib.m4
   m4/gnulib-common.m4
   top/GNUmakefile

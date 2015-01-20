@@ -51,10 +51,11 @@
 
    * When building on some GNU/Linux systems for multilib targets
      `libtool' sometimes guesses the wrong paths that the linker and
-     dynamic linker search by default. If this occurs, you may override
-     libtool's guesses at `configure' time by setting the `autoconf'
-     cache variables `lt_cv_sys_lib_search_path_spec' and
-     `lt_cv_sys_lib_dlsearch_path_spec' respectively to the correct
-     search paths.
+     dynamic linker search by default. If this occurs for the dynamic
+     library path, you may use the `LT_SYS_LIBRARY_PATH' environment
+     variable to adjust. Otherwise, at `configure' time you may
+     override libtool's guesses by setting the `autoconf' cache
+     variables `lt_cv_sys_lib_search_path_spec' and
+     `lt_cv_sys_lib_dlsearch_path_spec' respectively.
 
 

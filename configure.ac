@@ -1,6 +1,6 @@
 # Process this file with autoconf to create configure. -*- autoconf -*-
 
-#   Copyright (C) 2001, 2004-2005, 2008, 2010-2014 Free Software
+#   Copyright (C) 2001, 2004-2005, 2008, 2010-2015 Free Software
 #   Foundation, Inc.
 #   Written by Gary V. Vaughan, 2001
 #
@@ -79,6 +79,13 @@ AC_SUBST([AUTOTEST], ['$(AUTOM4TE) --language=autotest'])
 # This is a sanity check so we can see what version is used in bug reports.
 AS_BOX([Configuring AC_PACKAGE_TARNAME AC_PACKAGE_VERSION])
 echo
+
+
+## ------------ ##
+## Shell tools. ##
+## ------------ ##
+
+AC_PROG_GNU_M4
 
 
 ## ------------------------ ##
