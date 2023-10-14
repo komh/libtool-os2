@@ -2073,7 +2073,7 @@ include the following information:
        autoconf:       `($AUTOCONF --version) 2>/dev/null |$SED 1q`
 
 Report bugs to <bug-libtool@gnu.org>.
-GNU libtool home page: <http://www.gnu.org/software/libtool/>.
+GNU libtool home page: <https://www.gnu.org/software/libtool/>.
 General help using GNU software: <http://www.gnu.org/gethelp/>."
     exit 0
 }
@@ -5483,7 +5483,7 @@ func_exec_program ()
 
     # Some systems cannot cope with colon-terminated $shlibpath_var
     # The second colon is a workaround for a bug in BeOS R4 sed
-    $shlibpath_var=\`\$ECHO \"\$$shlibpath_var\" | $SED 's/::*\$//'\`
+    $shlibpath_var=\`\$ECHO \"\$$shlibpath_var\" | $SED 's/'$PATH_SEPARATOR$PATH_SEPARATOR'*\$//'\`
 
     export $shlibpath_var
 "
@@ -7455,7 +7455,7 @@ func_mode_link ()
 
     if test -n "$shlibpath_var"; then
       # get the directories listed in $shlibpath_var
-      eval shlib_search_path=\`\$ECHO \"\$$shlibpath_var\" \| \$SED \'s/:/ /g\'\`
+      eval shlib_search_path=\`\$ECHO \"\$$shlibpath_var\" \| \$SED \'s/$PATH_SEPARATOR/ /g\'\`
     else
       shlib_search_path=
     fi
