@@ -2306,17 +2306,17 @@ func_munge_path_list ()
     x)
         ;;
     *$PATH_SEPARATOR)
-        eval @S|@1=\"`$ECHO @S|@2 | $SED 's/'$PATH_SEPARATOR'/ /g'` \@S|@@S|@1\"
+        eval @S|@1=\"`$ECHO @S|@2 | $SED s/$PATH_SEPARATOR/\ /g` \@S|@@S|@1\"
         ;;
     x$PATH_SEPARATOR*)
-        eval @S|@1=\"\@S|@@S|@1 `$ECHO @S|@2 | $SED 's/'$PATH_SEPARATOR'/ /g'`\"
+        eval @S|@1=\"\@S|@@S|@1 `$ECHO @S|@2 | $SED s/$PATH_SEPARATOR/\ /g`\"
         ;;
     *$PATH_SEPARATOR$PATH_SEPARATOR*)
-        eval @S|@1=\"\@S|@@S|@1\ `$ECHO @S|@2 | $SED -e 's/.*'$PATH_SEPARATOR$PATH_SEPARATOR'//' -e 's/'$PATH_SEPARATOR'/ /g'`\"
-        eval @S|@1=\"`$ECHO @S|@2 | $SED -e 's/'$PATH_SEPARATOR$PATH_SEPARATOR'.*//' -e 's/'$PATH_SEPARATOR'/ /g'`\ \@S|@@S|@1\"
+        eval @S|@1=\"\@S|@@S|@1\ `$ECHO @S|@2 | $SED -e s/.*$PATH_SEPARATOR$PATH_SEPARATOR// -e s/$PATH_SEPARATOR/\ /g`\"
+        eval @S|@1=\"`$ECHO @S|@2 | $SED -e s/$PATH_SEPARATOR$PATH_SEPARATOR.*// -e s/$PATH_SEPARATOR/\ /g`\ \@S|@@S|@1\"
         ;;
     *)
-        eval @S|@1=\"`$ECHO @S|@2 | $SED 's/'$PATH_SEPARATOR'/ /g'`\"
+        eval @S|@1=\"`$ECHO @S|@2 | $SED s/$PATH_SEPARATOR/\ /g`\"
         ;;
     esac
 }
