@@ -1,6 +1,6 @@
 # execute-mode.at -- libtool --mode=execute             -*- Autotest -*-
 #
-#   Copyright (C) 2008-2015 Free Software Foundation, Inc.
+#   Copyright (C) 2008-2019, 2021-2024 Free Software Foundation, Inc.
 #   Written by Ralf Wildenhues, 2008
 #
 #   This file is part of GNU Libtool.
@@ -16,10 +16,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GNU Libtool; see the file COPYING.  If not, a copy
-# can be downloaded from  http://www.gnu.org/licenses/gpl.html,
-# or obtained by writing to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GNU Libtool.  If not, see <https://www.gnu.org/licenses/>.
 ####
 
 AT_SETUP([execute mode])
@@ -173,6 +170,13 @@ LT_AT_NOINST_EXEC_CHECK([./main], [], [], [stdout], [ignore],
 			["arg  with special chars: \$!&*'\`()"])
 AT_CHECK([$FGREP 'arg  with special chars: $!&*'\''`()' stdout], [], [ignore])
 
+# OpenBSD cwrapper has issues parsing '<' and '>' in execute mode without other
+# characters, so the symbols are escaped during testing in OpenBSD.
+escape=
+case $host_os in openbsd*)
+  escape='\' ;;
+esac
+
 # We always pair two args.  The first one is never the empty string.
 arg1=
 for arg2 in \
@@ -185,7 +189,7 @@ for arg2 in \
    'd\\' '' \
    'd\\\' '' \
    'd\\\\' '' \
-   '<' '>' \
+   "$escape<" "$escape>" \
    '<def>' ''
 do
   if test -z "$arg1"; then

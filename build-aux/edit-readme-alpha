@@ -1,7 +1,7 @@
 #! /bin/sh
 
 #   edit-readme-alpha - edit README file for alpha releases
-#   Copyright (C) 2010-2015 Free Software Foundation, Inc.
+#   Copyright (C) 2010-2019, 2021-2024 Free Software Foundation, Inc.
 #   Written by Gary V. Vaughan, 2010
 #
 #   This file is part of GNU Libtool.
@@ -17,13 +17,10 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GNU Libtool; see the file COPYING.  If not, a copy
-# can be downloaded from  http://www.gnu.org/licenses/gpl.html,
-# or obtained by writing to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GNU Libtool.  If not, see <https://www.gnu.org/licenses/>.
 ####
 
-# We used to maintain separate (but extremely similiar!) README and
+# We used to maintain separate (but extremely similar!) README and
 # README.alpha files, and had 'make dist' include the right one in a
 # distribution based on the contests of '$(VERSION)'.
 #
@@ -62,16 +59,18 @@ for file in "$@"; do
     continue
   }
 
+  # Did we already in-place edited this file?
+  matched=`sed -n -e '/^This is an alpha testing release/,/a consistent, portable interface\.$/p' $file \
+           |wc -l |sed 's|^ *||'`
+  test 3 = "$matched" && {
+    echo "$progname: $file already edited" >&2
+    continue
+  }
+
   # Make sure the paragraph we are matching has not been edited since
   # this script was written.
   matched=`sed -n -e '/^\[GNU Libtool\]\[libtool\] is/,/^consistent, portable interface\.$/p' $file \
            |wc -l |sed 's|^ *||'`
-
-  # Unless, of course, it was edited by this script already.
-  test 3 = "$matched" \
-      || matched=`sed -n -e '/^This is an alpha testing release/,/a consistent, portable interface\.$/p' $file \
-                  |wc -l |sed 's|^ *||'`
-
   test 3 = "$matched" \
       || func_fatal_error "$file format has changed, please fix '$0'"
 
@@ -79,7 +78,7 @@ for file in "$@"; do
   trap 'x=$?; rm $file.T; exit $x' 1 2 13 15
 
   # Edit the first paragraph to be suitable for an alpha release.
-  sed -n '/^\[GNU Libtool\]\[libtool\] is/,/^consistent, portable interface\.$/c\
+  sed '/^\[GNU Libtool\]\[libtool\] is/,/^consistent, portable interface\.$/c\
 This is an alpha testing release of [GNU Libtool][libtool], a generic\
 library support script.  [Libtool][] hides the complexity of using shared\
 libraries behind a consistent, portable interface.' $file > $file.T

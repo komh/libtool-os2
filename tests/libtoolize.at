@@ -1,7 +1,7 @@
 # libtoolize.at -- test libtoolize operation                  -*- Autotest -*-
 #
-#   Copyright (C) 2005, 2007-2008, 2011-2015 Free Software Foundation,
-#   Inc.
+#   Copyright (C) 2005, 2007-2008, 2011-2019, 2021-2024 Free Software
+#   Foundation, Inc.
 #   Written by Gary V. Vaughan, 2005
 #
 #   This file is part of GNU Libtool.
@@ -17,10 +17,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GNU Libtool; see the file COPYING.  If not, a copy
-# can be downloaded from  http://www.gnu.org/licenses/gpl.html,
-# or obtained by writing to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GNU Libtool.  If not, see <https://www.gnu.org/licenses/>.
 ####
 
 
@@ -471,7 +468,7 @@ libtoolize: linking file 'ltdl/README'
 libtoolize: linking file 'ltdl/configure.ac'
 libtoolize: copying file 'ltdl/aclocal.m4'
 libtoolize: linking file 'ltdl/Makefile.in'
-libtoolize: linking file 'ltdl/config-h.in'
+libtoolize: copying file 'ltdl/config-h.in'
 libtoolize: copying file 'ltdl/configure'
 libtoolize: linking file 'ltdl/libltdl/lt__alloc.h'
 libtoolize: linking file 'ltdl/libltdl/lt__argz_.h'
@@ -681,11 +678,8 @@ AT_DATA([expout],
 libtoolize: copying file 'm4/libtool.m4'
 libtoolize: copying file 'm4/ltoptions.m4'
 libtoolize: copying file 'm4/ltsugar.m4'
-libtoolize: You should add the contents of 'm4/ltsugar.m4' to 'aclocal.m4'.
 libtoolize: copying file 'm4/ltversion.m4'
-libtoolize: You should add the contents of 'm4/ltversion.m4' to 'aclocal.m4'.
 libtoolize: copying file 'm4/lt~obsolete.m4'
-libtoolize: You should add the contents of 'm4/lt~obsolete.m4' to 'aclocal.m4'.
 ]])
 
 LT_AT_CHECK_LIBTOOLIZE([--copy], 0, expout)
@@ -1047,7 +1041,7 @@ libtoolize: linking file 'ltdl/README'
 libtoolize: creating file 'ltdl/configure.ac'
 libtoolize: creating file 'ltdl/aclocal.m4'
 libtoolize: creating file 'ltdl/Makefile.in'
-libtoolize: linking file 'ltdl/config-h.in'
+libtoolize: copying file 'ltdl/config-h.in'
 libtoolize: creating file 'ltdl/configure'
 libtoolize: linking file 'ltdl/libltdl/lt__alloc.h'
 libtoolize: linking file 'ltdl/libltdl/lt__argz_.h'
@@ -1076,6 +1070,10 @@ libtoolize: linking file 'ltdl/ltdl.c'
 libtoolize: linking file 'ltdl/ltdl.h'
 libtoolize: linking file 'ltdl/slist.c'
 ]])
+
+# Replace transformed name of $lt_name to account for program-prefix
+lt_name=`$ECHO "$LIBTOOLIZE" | $SED "s|^.*/||"`
+$SED -i "s/libtoolize/$lt_name/g" expout
 
 AT_DATA([no-m4],
 [[#! /bin/sh

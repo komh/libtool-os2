@@ -1,9 +1,9 @@
 # DO NOT EDIT! GENERATED AUTOMATICALLY!
-# Copyright (C) 2002-2015 Free Software Foundation, Inc.
+# Copyright (C) 2002-2024 Free Software Foundation, Inc.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3 of the License, or
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
 # This file is distributed in the hope that it will be useful,
@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this file.  If not, see <http://www.gnu.org/licenses/>.
+# along with this file.  If not, see <https://www.gnu.org/licenses/>.
 #
 # As a special exception to the GNU General Public License,
 # this file may be distributed as part of a program that
@@ -37,12 +37,17 @@ AC_DEFUN([GL_EARLY],
   m4_pattern_allow([^gl_ES$])dnl a valid locale name
   m4_pattern_allow([^gl_LIBOBJS$])dnl a variable
   m4_pattern_allow([^gl_LTLIBOBJS$])dnl a variable
+
+  # Pre-early section.
   AC_REQUIRE([gl_PROG_AR_RANLIB])
+
+  # Code from module all-shells-tests:
   # Code from module announce-gen:
   # Code from module bootstrap:
   # Code from module do-release-commit-and-tag:
   # Code from module extract-trace:
   # Code from module funclib.sh:
+  # Code from module funclib.sh-tests:
   # Code from module gendocs:
   # Code from module git-version-gen:
   # Code from module gitlog-to-changelog:
@@ -52,10 +57,15 @@ AC_DEFUN([GL_EARLY],
   # Code from module inline-source:
   # Code from module maintainer-makefile:
   # Code from module options-parser:
+  # Code from module options-parser-tests:
   # Code from module readme-release:
+  # Code from module test-framework-sh:
+  # Code from module test-framework-sh-tests:
   # Code from module update-copyright:
+  # Code from module update-copyright-tests:
   # Code from module useless-if-before-free:
   # Code from module vc-list-files:
+  # Code from module vc-list-files-tests:
 ])
 
 # This macro should be invoked from ./configure.ac, in the section
@@ -70,8 +80,11 @@ AC_DEFUN([GL_INIT],
   m4_pushdef([AC_LIBSOURCES], m4_defn([GL_LIBSOURCES]))
   m4_pushdef([GL_LIBSOURCES_LIST], [])
   m4_pushdef([GL_LIBSOURCES_DIR], [])
+  m4_pushdef([GL_MACRO_PREFIX], [GL])
+  m4_pushdef([GL_MODULE_INDICATOR_PREFIX], [GL_GL])
   gl_COMMON
   gl_source_base='lib'
+  gl_source_base_prefix=
   # Autoconf 2.61a.99 and earlier don't support linking a file only
   # in VPATH builds.  But since GNUmakefile is for maintainer use
   # only, it does not matter if we skip the link with older autoconf.
@@ -85,6 +98,7 @@ AC_DEFUN([GL_INIT],
   AC_CONFIG_COMMANDS_PRE([m4_ifdef([AH_HEADER],
     [AC_SUBST([CONFIG_INCLUDE], m4_defn([AH_HEADER]))])])
   AC_REQUIRE([AC_PROG_SED])
+  AC_REQUIRE([AC_PROG_GREP])
   # End of code from modules
   m4_ifval(GL_LIBSOURCES_LIST, [
     m4_syscmd([test ! -d ]m4_defn([GL_LIBSOURCES_DIR])[ ||
@@ -97,6 +111,8 @@ AC_DEFUN([GL_INIT],
       m4_if(m4_sysval, [0], [],
         [AC_FATAL([expected source file, required through AC_LIBSOURCES, not found])])
   ])
+  m4_popdef([GL_MODULE_INDICATOR_PREFIX])
+  m4_popdef([GL_MACRO_PREFIX])
   m4_popdef([GL_LIBSOURCES_DIR])
   m4_popdef([GL_LIBSOURCES_LIST])
   m4_popdef([AC_LIBSOURCES])
@@ -105,16 +121,28 @@ AC_DEFUN([GL_INIT],
   AC_CONFIG_COMMANDS_PRE([
     GL_libobjs=
     GL_ltlibobjs=
+    GL_libobjdeps=
     if test -n "$GL_LIBOBJS"; then
       # Remove the extension.
+changequote(,)dnl
       sed_drop_objext='s/\.o$//;s/\.obj$//'
+      sed_dirname1='s,//*,/,g'
+      sed_dirname2='s,\(.\)/$,\1,'
+      sed_dirname3='s,^[^/]*$,.,'
+      sed_dirname4='s,\(.\)/[^/]*$,\1,'
+      sed_basename1='s,.*/,,'
+changequote([, ])dnl
       for i in `for i in $GL_LIBOBJS; do echo "$i"; done | sed -e "$sed_drop_objext" | sort | uniq`; do
         GL_libobjs="$GL_libobjs $i.$ac_objext"
         GL_ltlibobjs="$GL_ltlibobjs $i.lo"
+        i_dir=`echo "$i" | sed -e "$sed_dirname1" -e "$sed_dirname2" -e "$sed_dirname3" -e "$sed_dirname4"`
+        i_base=`echo "$i" | sed -e "$sed_basename1"`
+        GL_libobjdeps="$GL_libobjdeps $i_dir/\$(DEPDIR)/$i_base.Plo"
       done
     fi
     AC_SUBST([GL_LIBOBJS], [$GL_libobjs])
     AC_SUBST([GL_LTLIBOBJS], [$GL_ltlibobjs])
+    AC_SUBST([GL_LIBOBJDEPS], [$GL_libobjdeps])
   ])
   gltests_libdeps=
   gltests_ltlibdeps=
@@ -123,14 +151,23 @@ AC_DEFUN([GL_INIT],
   m4_pushdef([AC_LIBSOURCES], m4_defn([GLtests_LIBSOURCES]))
   m4_pushdef([GLtests_LIBSOURCES_LIST], [])
   m4_pushdef([GLtests_LIBSOURCES_DIR], [])
+  m4_pushdef([GL_MACRO_PREFIX], [GLtests])
+  m4_pushdef([GL_MODULE_INDICATOR_PREFIX], [GL_GL])
   gl_COMMON
-  gl_source_base='tests'
+  AC_REQUIRE([gl_CC_ALLOW_WARNINGS])
+  AC_REQUIRE([gl_CXX_ALLOW_WARNINGS])
+  gl_source_base='gnulib-tests'
+  gl_source_base_prefix=
 changequote(,)dnl
   GLtests_WITNESS=IN_`echo "${PACKAGE-$PACKAGE_TARNAME}" | LC_ALL=C tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ | LC_ALL=C sed -e 's/[^A-Z0-9_]/_/g'`_GNULIB_TESTS
 changequote([, ])dnl
   AC_SUBST([GLtests_WITNESS])
   gl_module_indicator_condition=$GLtests_WITNESS
   m4_pushdef([gl_MODULE_INDICATOR_CONDITION], [$gl_module_indicator_condition])
+  abs_aux_dir=`cd "$ac_aux_dir"; pwd`
+  AC_SUBST([abs_aux_dir])
+  abs_aux_dir=`cd "$ac_aux_dir"; pwd`
+  AC_SUBST([abs_aux_dir])
   m4_popdef([gl_MODULE_INDICATOR_CONDITION])
   m4_ifval(GLtests_LIBSOURCES_LIST, [
     m4_syscmd([test ! -d ]m4_defn([GLtests_LIBSOURCES_DIR])[ ||
@@ -143,6 +180,8 @@ changequote([, ])dnl
       m4_if(m4_sysval, [0], [],
         [AC_FATAL([expected source file, required through AC_LIBSOURCES, not found])])
   ])
+  m4_popdef([GL_MODULE_INDICATOR_PREFIX])
+  m4_popdef([GL_MACRO_PREFIX])
   m4_popdef([GLtests_LIBSOURCES_DIR])
   m4_popdef([GLtests_LIBSOURCES_LIST])
   m4_popdef([AC_LIBSOURCES])
@@ -151,17 +190,30 @@ changequote([, ])dnl
   AC_CONFIG_COMMANDS_PRE([
     GLtests_libobjs=
     GLtests_ltlibobjs=
+    GLtests_libobjdeps=
     if test -n "$GLtests_LIBOBJS"; then
       # Remove the extension.
+changequote(,)dnl
       sed_drop_objext='s/\.o$//;s/\.obj$//'
+      sed_dirname1='s,//*,/,g'
+      sed_dirname2='s,\(.\)/$,\1,'
+      sed_dirname3='s,^[^/]*$,.,'
+      sed_dirname4='s,\(.\)/[^/]*$,\1,'
+      sed_basename1='s,.*/,,'
+changequote([, ])dnl
       for i in `for i in $GLtests_LIBOBJS; do echo "$i"; done | sed -e "$sed_drop_objext" | sort | uniq`; do
         GLtests_libobjs="$GLtests_libobjs $i.$ac_objext"
         GLtests_ltlibobjs="$GLtests_ltlibobjs $i.lo"
+        i_dir=`echo "$i" | sed -e "$sed_dirname1" -e "$sed_dirname2" -e "$sed_dirname3" -e "$sed_dirname4"`
+        i_base=`echo "$i" | sed -e "$sed_basename1"`
+        GLtests_libobjdeps="$GLtests_libobjdeps $i_dir/\$(DEPDIR)/$i_base.Plo"
       done
     fi
     AC_SUBST([GLtests_LIBOBJS], [$GLtests_libobjs])
     AC_SUBST([GLtests_LTLIBOBJS], [$GLtests_ltlibobjs])
+    AC_SUBST([GLtests_LIBOBJDEPS], [$GLtests_libobjdeps])
   ])
+  AC_REQUIRE([gl_CC_GNULIB_WARNINGS])
 ])
 
 # Like AC_LIBOBJ, except that the module name goes
@@ -212,7 +264,7 @@ AC_DEFUN([GLtests_REPLACE_FUNCS], [
 AC_DEFUN([GLtests_LIBSOURCES], [
   m4_foreach([_gl_NAME], [$1], [
     m4_if(_gl_NAME, [alloca.c], [], [
-      m4_define([GLtests_LIBSOURCES_DIR], [tests])
+      m4_define([GLtests_LIBSOURCES_DIR], [gnulib-tests])
       m4_append([GLtests_LIBSOURCES_LIST], _gl_NAME, [ ])
     ])
   ])
@@ -240,6 +292,16 @@ AC_DEFUN([GL_FILE_LIST], [
   doc/gendocs_template_min
   m4/00gnulib.m4
   m4/gnulib-common.m4
+  m4/zzgnulib.m4
+  tests/init.sh
+  tests/test-all-shells.sh
+  tests/test-funclib-quote.sh
+  tests/test-init.sh
+  tests/test-option-parser-helper
+  tests/test-option-parser.sh
+  tests/test-update-copyright.sh
+  tests/test-vc-list-files-cvs.sh
+  tests/test-vc-list-files-git.sh
   top/GNUmakefile
   top/README-release
   top/maint.mk

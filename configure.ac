@@ -1,7 +1,7 @@
 # Process this file with autoconf to create configure. -*- autoconf -*-
 
-#   Copyright (C) 2001, 2004-2005, 2008, 2010-2015 Free Software
-#   Foundation, Inc.
+#   Copyright (C) 2001, 2004-2005, 2008, 2010-2019, 2021-2024 Free
+#   Software Foundation, Inc.
 #   Written by Gary V. Vaughan, 2001
 #
 #   This file is part of GNU Libtool.
@@ -17,14 +17,11 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GNU Libtool; see the file COPYING.  If not, a copy
-# can be downloaded from  http://www.gnu.org/licenses/gpl.html,
-# or obtained by writing to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GNU Libtool.  If not, see <https://www.gnu.org/licenses/>.
 ####
 
 
-AC_PREREQ(2.62)
+AC_PREREQ(2.64)
 dnl Oldest automake required for bootstrap is below in AM_INIT_AUTOMAKE.
 
 
@@ -35,7 +32,7 @@ AC_INIT([GNU Libtool],
 	m4_esyscmd([build-aux/git-version-gen .tarball-version]),
 	[bug-libtool@gnu.org])
 m4_ifndef([AC_PACKAGE_URL],
-	  [AC_SUBST([PACKAGE_URL], [http://www.gnu.org/s/libtool/])])
+	  [AC_SUBST([PACKAGE_URL], [https://www.gnu.org/s/libtool/])])
 
 # Remove this when a released Autoconf is capable of bootstrapping
 # Libtool without it (probably after autoconf-2.70).
@@ -111,7 +108,7 @@ AB_INIT([$autobuild_mode])
 
 
 dnl Make sure config.status is regenerated when the version timestamp changes
-AC_SUBST([CONFIG_STATUS_DEPENDENCIES], ['$(srcdir)/.version'])
+AC_SUBST([CONFIG_STATUS_DEPENDENCIES], ['$(dotversion)'])
 
 
 ## ------------------------------- ##
@@ -166,7 +163,7 @@ LT_LANG(Windows Resource)
 AC_SUBST([to_host_file_cmd])dnl
 AC_SUBST([to_tool_file_cmd])dnl
 
-# Propagate --with-aix-soname option to the testsuite.
+# Propagate --enable-aix-soname option to the testsuite.
 AC_SUBST([with_aix_soname])dnl
 
 ## ---------------------- ##
@@ -182,5 +179,5 @@ AM_MISSING_PROG([HELP2MAN], [help2man])
 ## -------- ##
 ## Outputs. ##
 ## -------- ##
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile gnulib-tests/Makefile])
 AC_OUTPUT

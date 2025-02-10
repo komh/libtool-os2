@@ -1,7 +1,7 @@
 # old-m4-iface.at -- exercise old m4 interface to libtool     -*- Autotest -*-
 #
-#   Copyright (C) 2005, 2008-2009, 2011-2015 Free Software Foundation,
-#   Inc.
+#   Copyright (C) 2005, 2008-2009, 2011-2019, 2021-2024 Free Software
+#   Foundation, Inc.
 #   Written by Gary V. Vaughan, 2005
 #
 #   This file is part of GNU Libtool.
@@ -17,10 +17,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GNU Libtool; see the file COPYING.  If not, a copy
-# can be downloaded from  http://www.gnu.org/licenses/gpl.html,
-# or obtained by writing to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GNU Libtool.  If not, see <https://www.gnu.org/licenses/>.
 ####
 
 
@@ -93,7 +90,7 @@ LT_AT_BOOTSTRAP([ignore], [ignore], [ignore], [ignore], [--force])
 LT_AT_EXEC_CHECK([./old], 0, [Hello, World!])
 
 # Now, test that libtoolize doesn't mistakenly think the user called
-# any libtool macros if in fact she didn't.
+# any libtool macros if in fact they didn't.
 $SED '/AM_PROG_LIBTOOL/d' configure.in >configure.int
 mv -f configure.int configure.in
 AT_CHECK([$LIBTOOLIZE -n], [0], [stdout], [stderr])

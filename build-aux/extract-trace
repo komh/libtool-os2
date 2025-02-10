@@ -3,31 +3,27 @@
 # Extract macro arguments from autotools input with GNU M4.
 # Written by Gary V. Vaughan, 2010
 #
-# Copyright (C) 2010-2015 Free Software Foundation, Inc.
-# This is free software; see the source for copying conditions.  There is NO
-# warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# This is free software.  There is NO warranty; not even for
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+# Copyright (C) 2010-2019, 2021, 2023-2024 Bootstrap Authors
+#
+# This file is dual licensed under the terms of the MIT license
+# <https://opensource.org/licenses/MIT>, and GPL version 2 or later
+# <https://www.gnu.org/licenses/gpl-2.0.html>.  You must apply one of
+# these licenses when using or redistributing this software or any of
+# the files within it.  See the URLs above, or the file `LICENSE`
+# included in the Bootstrap distribution for the full license texts.
+
+# Please report bugs or propose patches to:
+# <https://github.com/gnulib-modules/bootstrap/issues>
 
 # Make sure we've evaluated scripts we depend on.
 test -z "$progpath" && . `echo "$0" |${SED-sed} 's|[^/]*$||'`/funclib.sh
 test extract-trace = "$progname" && . `echo "$0" |${SED-sed} 's|[^/]*$||'`/options-parser
 
 # Set a version string.
-scriptversion=2015-01-20.17; # UTC
-
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-# Please report bugs or propose patches to gary@gnu.org.
+scriptversion=2019-02-19.15; # UTC
 
 
 ## ------ ##
@@ -329,29 +325,41 @@ func_extract_trace ()
     # arguments to Autocof functions, but without following
     # 'm4_s?include' files.
     _G_mini='
-        # Initialisation.
+        dnl  Initialisation.
         m4_changequote([,])
         m4_define([m4_copy],   [m4_define([$2], m4_defn([$1]))])
         m4_define([m4_rename], [m4_copy([$1], [$2])m4_undefine([$1])])
 
-        # Disable these macros.
-        m4_undefine([m4_dnl])
-        m4_undefine([m4_include])
-        m4_undefine([m4_m4exit])
-        m4_undefine([m4_m4wrap])
-        m4_undefine([m4_maketemp])
+        dnl  Replace macros which may abort m4 with a no-op variant.
+        m4_pushdef([m4_assert])
+        m4_pushdef([m4_exit])
+        m4_pushdef([m4_fatal])
+        m4_pushdef([m4_m4exit])
 
-        # Copy and rename macros not handled by "m4 --prefix".
+        dnl  Replace macros that might break stderr of m4.
+        m4_pushdef([m4_errprint])
+        m4_pushdef([m4_errprintn])
+        m4_pushdef([m4_include])
+        m4_pushdef([m4_warn])
+
+        dnl  Avoid side-effects of tracing by extract-trace.
+        m4_pushdef([m4_maketemp])
+        m4_pushdef([m4_mkstemp])
+
+        dnl  TODO: reasons for this
+        m4_pushdef([m4_dnl])
+        m4_pushdef([m4_m4wrap])
+
+        dnl  Copy and rename macros not handled by "m4 --prefix".
         m4_define([dnl],         [m4_builtin([dnl])])
         m4_copy([m4_define],     [m4_defun])
         m4_rename([m4_ifelse],   [m4_if])
-        m4_ifdef([m4_mkstemp],   [m4_undefine([m4_mkstemp])])
         m4_rename([m4_patsubst], [m4_bpatsubst])
         m4_rename([m4_regexp],   [m4_bregexp])
 
-        # "m4sugar.mini" - useful m4-time macros for dynamic arguments.
-        # If we discover packages that need more m4 macros defined in
-        # order to bootstrap correctly, add them here:
+        dnl  "m4sugar.mini" - useful m4-time macros for dynamic arguments.
+        dnl  If we discover packages that need more m4 macros defined in
+        dnl  order to bootstrap correctly, add them here:
         m4_define([m4_bmatch],
             [m4_if([$#], 0, [], [$#], 1, [], [$#], 2, [$2],
                    [m4_if(m4_bregexp([$1], [$2]), -1,
@@ -362,11 +370,11 @@ func_extract_trace ()
         m4_define([m4_require], [$1])
         m4_define([m4_shift3], [m4_shift(m4shift(m4shift($@)))])
 
-        # "autoconf.mini" - things from autoconf macros we care about.
+        dnl  "autoconf.mini" - things from autoconf macros we care about.
         m4_copy([m4_defun], [AC_DEFUN])
 
-        # Dummy definitions for the macros we want to trace.
-        # AM_INIT_AUTOMAKE at least produces no trace without this.
+        dnl  Dummy definitions for the macros we want to trace.
+        dnl  AM_INIT_AUTOMAKE at least produces no trace without this.
     '
 
     _G_save=$IFS
@@ -473,6 +481,6 @@ test extract-trace = "$progname" && func_main "$@"
 # mode: shell-script
 # sh-indentation: 2
 # eval: (add-hook 'before-save-hook 'time-stamp)
-# time-stamp-pattern: "20/scriptversion=%:y-%02m-%02d.%02H; # UTC"
+# time-stamp-pattern: "50/scriptversion=%:y-%02m-%02d.%02H; # UTC"
 # time-stamp-time-zone: "UTC"
 # End:

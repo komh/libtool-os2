@@ -1,6 +1,6 @@
 ## Makefile.am -- Process this file with automake to produce Makefile.in
 ##
-##   Copyright (C) 2003-2015 Free Software Foundation, Inc.
+##   Copyright (C) 2003-2019, 2021-2024 Free Software Foundation, Inc.
 ##   Written by Gary V. Vaughan, 2003
 ##
 ##   This file is part of GNU Libtool.
@@ -16,10 +16,7 @@
 ## GNU General Public License for more details.
 ##
 ## You should have received a copy of the GNU General Public License
-## along with GNU Libtool; see the file COPYING.  If not, a copy
-## can be downloaded from  http://www.gnu.org/licenses/gpl.html,
-## or obtained by writing to the Free Software Foundation, Inc.,
-## 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+## along with GNU Libtool.  If not, see <https://www.gnu.org/licenses/>.
 #####
 
 ACLOCAL_AMFLAGS		= -I m4
@@ -27,7 +24,7 @@ ACLOCAL_AMFLAGS		= -I m4
 AM_CPPFLAGS		=
 AM_LDFLAGS		=
 
-SUBDIRS			= .
+SUBDIRS			= . gnulib-tests
 DIST_SUBDIRS		= $(SUBDIRS)
 EXTRA_DIST		=
 
@@ -86,11 +83,14 @@ ltmain_in	= $(srcdir)/$(aux_dir)/ltmain.in
 libtool_m4	= $(srcdir)/$(macro_dir)/libtool.m4
 ltversion_in	= $(srcdir)/$(macro_dir)/ltversion.in
 ltversion_m4	= $(srcdir)/$(macro_dir)/ltversion.m4
+no_bogus_macros	= $(srcdir)/$(aux_dir)/no-bogus-m4-defines
 options_parser	= $(srcdir)/$(aux_dir)/options-parser
+u2d_copyright	= $(srcdir)/$(aux_dir)/update-copyright
 
 EXTRA_DIST     += $(extract_trace) $(funclib_sh) $(inline_source) \
 		  $(libtoolize_in) $(ltmain_in) $(ltmain_sh) \
-		  $(ltversion_in) $(ltversion_m4) $(options_parser)
+		  $(ltversion_in) $(ltversion_m4) $(no_bogus_macros) \
+		  $(options_parser) $(u2d_copyright)
 
 ## These are the replacements that need to be made at bootstrap time,
 ## because they must be static in distributed files, and not accidentally
@@ -207,7 +207,9 @@ bootstrap_files = \
     $(ltversion_m4)
 
 .PHONY: bootstrap-deps bootstrap-deps-prep
-bootstrap-deps: bootstrap-deps-prep $(bootstrap_files)
+bootstrap-deps: bootstrap-deps-prep
+	$(MAKE) $(bootstrap_files)
+
 bootstrap-deps-prep:
 ## The following variables are substituted by 'bootstrap-dep-preps'
 	@exit_cmd=:; \
@@ -328,7 +330,7 @@ EXTRA_DIST     += $(lt_aclocal_m4) \
 		  $(lt_obsolete_m4) \
 		  $(stamp_mk)
 
-$(lt_Makefile_in): $(lt_Makefile_am) $(lt_aclocal_m4)
+$(lt_Makefile_in): $(lt_Makefile_am) $(lt_aclocal_m4) $(lt_config_h_in)
 	$(AM_V_GEN)cd '$(srcdir)/$(ltdl_dir)' && $(AUTOMAKE) Makefile
 
 # Don't let unused scripts leak into the libltdl Makefile
@@ -365,7 +367,7 @@ lt_configure_deps = $(lt_aclocal_m4) $(lt_aclocal_m4_deps)
 $(lt_aclocal_m4): $(lt_aclocal_m4_deps)
 	$(AM_V_GEN)cd '$(srcdir)/$(ltdl_dir)' && $(ACLOCAL) -I ../m4
 
-$(lt_configure): $(lt_configure_deps)
+$(lt_configure): $(lt_configure_deps) $(lt_config_h_in)
 	$(AM_V_GEN)cd '$(srcdir)/$(ltdl_dir)' && $(AUTOCONF)
 
 $(lt_config_h_in): $(lt_configure_deps)
@@ -417,9 +419,10 @@ update_mans = \
 # manual pages if the sources for the build-tree files we want to
 # run have changed.
 $(libtool_1): $(ltmain_sh)
-	$(AM_V_GEN)$(update_mans) --help-option=--help-all libtool
+	$(AM_V_GEN)$(update_mans) -n 'Provide generalized library-building support services' --help-option=--help-all libtool
 $(libtoolize_1): $(libtoolize_in)
-	$(AM_V_GEN)$(update_mans) libtoolize
+	$(AM_V_GEN)$(update_mans) -n 'Prepare a package to use libtool' libtoolize
+
 
 
 ## ------------- ##
@@ -534,7 +537,7 @@ git_log_fix		= $(srcdir)/$(aux_dir)/git-log-fix
 thanks_gen		= $(srcdir)/$(aux_dir)/thanks-gen
 
 dotserial		= $(distdir)/.serial
-dotversion		= $(srcdir)/.version
+dotversion		= $(top_srcdir)/.version
 tarball_version		= $(distdir)/.tarball-version
 readme			= $(distdir)/README
 changelog		= $(distdir)/ChangeLog
@@ -547,7 +550,9 @@ no_thanks		= $(srcdir)/NO-THANKS
 changelog_start_date = 2011-01-01
 $(changelog): FORCE
 	$(AM_V_GEN)if test -d '$(srcdir)/.git'; then \
-	  $(gitlog_to_changelog) --amend=$(git_log_fix) \
+	  TZ=UTC $(gitlog_to_changelog) --amend=$(git_log_fix) \
+	      --ignore-matching=Omit-from-ChangeLog. \
+	      --format='%s%n%n%b%n' \
 	      --since=$(changelog_start_date) > '$@T'; \
 	  rm -f '$@'; mv '$@T' '$@'; \
 	  cat '$(changelog_old)' >> '$@'; \
@@ -562,7 +567,7 @@ ASSORT = LC_ALL=C sort
 prologue = perl -ne '/^\#\#/ and exit; print' $(no_thanks)
 
 # Generate THANKS using git log entries as far as possible, fixing
-# up ommisions and errors from NO-THANKS configuration.
+# up omissions and errors from NO-THANKS configuration.
 $(thanks): FORCE
 	$(AM_V_GEN)if test -d '$(srcdir)/.git'; then \
 	  { \
@@ -592,7 +597,7 @@ $(dotversion):
 EXTRA_DIST += $(edit_readme_alpha)
 re_alpha_version = '\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*[-\.][-\.0-9a-z]*\)'
 $(readme): FORCE
-	@if test -n `expr $(VERSION) : $(re_alpha_version)`; then \
+	@if test -n "`expr $(VERSION) : $(re_alpha_version)`"; then \
 	  if test 0 = '$(AM_DEFAULT_VERBOSITY)' && test 1 != '$(V)'; \
 	    then echo "  GEN     " $@; \
 	  else echo "$(SHELL) $(edit_readme_alpha) $@"; fi; \
@@ -608,12 +613,7 @@ dist-hook: $(changelog) $(thanks) $(dotversion) $(readme)
 ## ...and similarly for .serial.
 	$(git_commit_count) > $(dotserial)
 ## Ensure aclocal has not wrongly picked up old macro definitions.
-	@for macro in LT_INIT AC_PROG_LIBTOOL AM_PROG_LIBTOOL; do \
-	  if grep "$$macro" '$(srcdir)/aclocal.m4' '$(lt_aclocal_m4)'; then \
-	    echo "Bogus $$macro macro contents in an aclocal.m4 file." >&2; \
-	    exit 1; \
-	  else :; fi; \
-	done
+	$(no_bogus_macros)
 
 distcheck-hook: syntax-check
 
@@ -690,7 +690,6 @@ TESTSUITE_AT	= tests/testsuite.at \
 		  tests/versioning.at \
 		  tests/destdir.at \
 		  tests/old-m4-iface.at \
-		  tests/old-ltdl-iface.at \
 		  tests/am-subdir.at \
 		  tests/lt_dlexit.at \
 		  tests/lt_dladvise.at \
@@ -726,6 +725,9 @@ TESTSUITE_AT	= tests/testsuite.at \
 		  tests/sysroot.at \
 		  tests/stresstest.at \
 		  tests/cmdline_wrap.at \
+		  tests/bug_62343.at	\
+		  tests/bug_71489.at \
+		  tests/bug_42313.at \
 		  $(NOTHING_ELSE)
 
 EXTRA_DIST     += $(testsuite) $(TESTSUITE_AT) $(package_m4)

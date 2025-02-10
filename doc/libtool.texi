@@ -20,7 +20,8 @@
 @copying
 This manual is for GNU Libtool (version @value{VERSION}, @value{UPDATED}).
 
-Copyright @copyright{} 1996-2015 Free Software Foundation, Inc.
+Copyright @copyright{} 1996--2019, 2021--2024 Free Software Foundation,
+Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3
@@ -202,7 +203,6 @@ Porting libtool to new systems
 
 Platform quirks
 
-* References::                  Finding more information.
 * Compilers::                   Creating object files from source files.
 * Reloadable objects::          Binding object files together.
 * Multiple dependencies::       Removing duplicate dependent libraries.
@@ -408,10 +408,6 @@ libraries and programs.
 In summary, ``libraries are programs with multiple entry points, and
 more formally defined interfaces.''
 
-Version 0.7 of libtool was a complete redesign and rewrite of libtool to
-reflect this new paradigm.  So far, it has proved to be successful:
-libtool is simpler and more useful than before.
-
 The best way to introduce the libtool paradigm is to contrast it with
 the paradigm of existing library systems, with examples from each.  It
 is a new way of thinking, so it may take a little time to absorb, but
@@ -436,14 +432,19 @@ An Ultrix 4.2 platform with only static libraries.
 A NetBSD/i386 1.2 platform with shared libraries.
 @end table
 
-You can follow these examples on your own platform, using the
-preconfigured libtool script that was installed with libtool
-(@pxref{Configuring}).
+Source files for the following examples are taken from the Autotest file
+@file{tests/demo.at}.  The files can be extracted by running a demo test and
+preserving the artifacts:
 
-Source files for the following examples are taken from the @file{demo}
-subdirectory of the libtool distribution.  Assume that we are building a
-library, @file{libhello}, out of the files @file{foo.c} and
-@file{hello.c}.
+@example
+burger$ make check TESTSUITEFLAGS="-d -k 'preloaded static library'"
+burger$ cp -r tests/testsuite.dir/027 demo/
+@end example
+
+You can follow these examples on your own platform, using the preconfigured
+libtool script that was installed with libtool (@pxref{Configuring}).  Assume
+that we are building a library, @file{libhello}, out of the files @file{foo.c}
+and @file{hello.c}.
 
 Note that the @file{foo.c} source file uses the @code{cos} math library
 function, which is usually found in the standalone math library, and not
@@ -479,7 +480,7 @@ To create an object file from a source file, the compiler is invoked
 with the @option{-c} flag (and any other desired flags):
 
 @example
-burger$ @kbd{gcc -g -O -c main.c}
+burger$ @kbd{gcc -I. -g -O -c main.c}
 burger$
 @end example
 
@@ -491,8 +492,8 @@ static library is as simple as creating object files that are linked to
 form an executable:
 
 @example
-burger$ @kbd{gcc -g -O -c foo.c}
-burger$ @kbd{gcc -g -O -c hello.c}
+burger$ @kbd{gcc -I. -g -O -c foo.c}
+burger$ @kbd{gcc -I. -g -O -c hello.c}
 burger$
 @end example
 
@@ -519,10 +520,10 @@ simply invoke libtool with the standard compilation command as
 arguments (@pxref{Compile mode}):
 
 @example
-a23$ @kbd{libtool --mode=compile gcc -g -O -c foo.c}
-gcc -g -O -c foo.c -o foo.o
-a23$ @kbd{libtool --mode=compile gcc -g -O -c hello.c}
-gcc -g -O -c hello.c -o hello.o
+a23$ @kbd{libtool --mode=compile gcc -I. -g -O -c foo.c}
+gcc -I. -g -O -c foo.c -o foo.o
+a23$ @kbd{libtool --mode=compile gcc -I. -g -O -c hello.c}
+gcc -I. -g -O -c hello.c -o hello.o
 a23$
 @end example
 
@@ -551,19 +552,19 @@ additional PIC object by inserting the appropriate PIC generation
 flags into the compilation command:
 
 @example
-burger$ @kbd{libtool --mode=compile gcc -g -O -c foo.c}
+burger$ @kbd{libtool --mode=compile gcc -I. -g -O -c foo.c}
 mkdir @value{objdir}
-gcc -g -O -c foo.c  -fPIC -DPIC -o @value{objdir}/foo.o
-gcc -g -O -c foo.c -o foo.o >/dev/null 2>&1
+gcc -I. -g -O -c foo.c  -fPIC -DPIC -o @value{objdir}/foo.o
+gcc -I. -g -O -c foo.c -o foo.o >/dev/null 2>&1
 burger$
 @end example
 
-Note that Libtool automatically created @file{@value{objdir}} directory
+Note that Libtool automatically created the @file{@value{objdir}} directory
 upon its first execution, where PIC library object files will be stored.
 
 Since @samp{burger} supports shared libraries, and requires PIC
-objects to build them, Libtool has compiled a PIC object this time,
-and made a note of it in the libtool object:
+objects to build them, Libtool has compiled a PIC object and
+made a note of it in the libtool object:
 
 @example
 # foo.lo - a libtool object file
@@ -580,16 +581,16 @@ non_pic_object='foo.o'
 @end example
 
 @cindex @option{-no-suppress}, libtool compile mode option
-Notice that the second run of GCC has its output discarded.  This is
-done so that compiler warnings aren't annoyingly duplicated.  If you
+Notice the second run of GCC has its output discarded.  This is
+done so the compiler warnings aren't annoyingly duplicated.  If you
 need to see both sets of warnings (you might have conditional code
-inside @samp{#ifdef PIC} for example), you can turn off suppression with
-the @option{-no-suppress} option to libtool's compile mode:
+inside @samp{#ifdef PIC} for example), you can turn off suppression by
+passing the @option{-no-suppress} option to libtool's compile mode:
 
 @example
-burger$ @kbd{libtool --mode=compile gcc -no-suppress -g -O -c hello.c}
-gcc -g -O -c hello.c  -fPIC -DPIC -o @value{objdir}/hello.o
-gcc -g -O -c hello.c -o hello.o
+burger$ @kbd{libtool --mode=compile gcc -no-suppress -I. -g -O -c hello.c}
+gcc -I. -g -O -c hello.c  -fPIC -DPIC -o @value{objdir}/hello.o
+gcc -I. -g -O -c hello.c -o hello.o
 burger$
 @end example
 
@@ -602,14 +603,14 @@ Without libtool, the programmer would invoke the @command{ar} command to
 create a static library:
 
 @example
-burger$ @kbd{ar cru libhello.a hello.o foo.o}
+burger$ @kbd{ar cr libhello.a hello.o foo.o}
 burger$
 @end example
 
 @pindex ranlib
 But of course, that would be too simple, so many systems require that
-you run the @code{ranlib} command on the resulting library (to give it
-better karma, or something):
+you run the @code{ranlib} command on the resulting library in order to
+generate a symbol table:
 
 @example
 burger$ @kbd{ranlib libhello.a}
@@ -632,7 +633,7 @@ libtool are the same ones you would use to produce an executable named
 a23$ @kbd{libtool --mode=link gcc -g -O -o libhello.la foo.o hello.o}
 *** Warning: Linking the shared library libhello.la against the
 *** non-libtool objects foo.o hello.o is not portable!
-ar cru .libs/libhello.a
+ar cr .libs/libhello.a
 ranlib .libs/libhello.a
 creating libhello.la
 (cd .libs && rm -f libhello.la && ln -s ../libhello.la libhello.la)
@@ -654,7 +655,7 @@ also that we need to add @option{-lm} to the link command line because
 libtool}).
 
 Another complication in building shared libraries is that we need to
-specify the path to the directory wher they will (eventually) be
+specify the path to the directory where they will (eventually) be
 installed (in this case, @file{/usr/local/lib})@footnote{If you don't
 specify an @code{rpath}, then libtool builds a libtool convenience
 archive, not a shared library (@pxref{Static libraries}).}:
@@ -662,7 +663,7 @@ archive, not a shared library (@pxref{Static libraries}).}:
 @example
 a23$ @kbd{libtool --mode=link gcc -g -O -o libhello.la foo.lo hello.lo \
                 -rpath /usr/local/lib -lm}
-ar cru @value{objdir}/libhello.a foo.o hello.o
+ar cr @value{objdir}/libhello.a foo.o hello.o
 ranlib @value{objdir}/libhello.a
 creating libhello.la
 (cd @value{objdir} && rm -f libhello.la && ln -s ../libhello.la libhello.la)
@@ -676,7 +677,7 @@ burger$ @kbd{libtool --mode=link gcc -g -O -o libhello.la foo.lo hello.lo \
                 -rpath /usr/local/lib -lm}
 rm -fr  @value{objdir}/libhello.a @value{objdir}/libhello.la
 ld -Bshareable -o @value{objdir}/libhello.so.0.0 @value{objdir}/foo.o @value{objdir}/hello.o -lm
-ar cru @value{objdir}/libhello.a foo.o hello.o
+ar cr @value{objdir}/libhello.a foo.o hello.o
 ranlib @value{objdir}/libhello.a
 creating libhello.la
 (cd @value{objdir} && rm -f libhello.la && ln -s ../libhello.la libhello.la)
@@ -689,16 +690,15 @@ library.
 
 @cindex @file{@value{objdir}} subdirectory
 Note how libtool creates extra files in the @file{@value{objdir}}
-subdirectory, rather than the current directory.  This feature is to
-make it easier to clean up the build directory, and to help ensure that
+subdirectory, rather than the current directory.  This feature makes
+it easier to clean up the build directory, and helps ensure
 other programs fail horribly if you accidentally forget to use libtool
 when you should.
 
-Again, you may want to have a look at the @file{.la} file
-to see what Libtool stores in it.  In particular, you will see that
-Libtool uses this file to remember the destination directory for the
-library (the argument to @option{-rpath}) as well as the dependency
-on the math library (@samp{-lm}).
+Again, you should look at the @file{.la} file to see what Libtool
+stores in it.  You will see Libtool uses this file to remember the
+destination directory for the library (the argument to @option{-rpath})
+as well as the dependency on the math library (@samp{-lm}).
 
 @node Linking executables
 @section Linking executables
@@ -749,8 +749,8 @@ a23$
 
 That looks too simple to be true.  All libtool did was transform
 @file{libhello.la} to @file{./@value{objdir}/libhello.a}, but remember
-that @samp{a23} has no shared libraries.  Notice that Libtool also
-remembered that @file{libhello.la} depends on @option{-lm}, so even
+that @samp{a23} has no shared libraries.  Notice Libtool also
+remembered @file{libhello.la} depends on @option{-lm}, so even
 though we didn't specify @option{-lm} on the libtool command
 line@footnote{
 @c
@@ -778,7 +778,7 @@ burger$ @kbd{gcc -g -O -o test test.o -L/usr/local/lib -lhello -lm}
 @end example
 
 However, unless @file{/usr/local/lib} is in the standard library search
-path, you won't be able to run @code{test}.  However, if you use libtool
+path, you won't be able to run @code{test}.  If instead you use libtool
 to link the already-installed libtool library, it will do The Right
 Thing (TM) for you:
 
@@ -796,7 +796,7 @@ Note that libtool added the necessary run-time path flag, as well as
 
 @cindex wrapper scripts for programs
 @cindex program wrapper scripts
-Notice that the executable, @code{hell}, was actually created in the
+Notice the executable, @code{hell}, was actually created in the
 @file{@value{objdir}} subdirectory.  Then, a wrapper script (or, on
 certain platforms, a wrapper executable @pxref{Wrapper executables}) was
 created in the current directory.
@@ -808,9 +808,9 @@ the wrapper script.
 
 On NetBSD 1.2, libtool encodes the installation directory of
 @file{libhello}, by using the @samp{-R/usr/local/lib} compiler flag.
-Then, the wrapper script guarantees that the executable finds the
-correct shared library (the one in @file{./@value{objdir}}) until it is
-properly installed.
+Then, the wrapper script guarantees the executable finds the
+correct shared library (the one in @file{./@value{objdir}}) so it
+can be properly installed.
 
 Let's compare the two different programs:
 
@@ -869,7 +869,7 @@ against uninstalled shared libraries. The wrapper executable thus
 performs the same function as the wrapper script used on other
 platforms, but allows to satisfy the @command{make} rules for the
 program, whose name ends in @code{$(EXEEXT)}. The actual program
-executable is created below @value{objdir}, and its name will end
+executable is created below @file{@value{objdir}}, and its name will end
 in @code{$(EXEEXT)} and may or may not contain an @code{lt-} prefix.
 This wrapper executable sets various environment values so that the
 program executable may locate its (uninstalled) shared libraries,
@@ -888,7 +888,7 @@ on to the program executable.  Therefore, the program executable may not
 employ command line options that begin with @code{--lt-}. (In fact, the
 wrapper executable will detect any command line options that begin with
 @code{--lt-} and abort with an error message if the option is not
-recognized). If this presents a problem, please contact the Libtool
+recognized.) If this presents a problem, please contact the Libtool
 team at @value{BUGADDR}.
 
 These command line options include:
@@ -1086,7 +1086,7 @@ install the executables after the libraries have been installed
 So, for our Ultrix example, we would run:
 
 @example
-a23# libtool --mode=install -c hell /usr/local/bin/hell
+a23# libtool --mode=install install -c hell /usr/local/bin/hell
 install -c hell /usr/local/bin/hell
 a23#
 @end example
@@ -1095,7 +1095,7 @@ On shared library systems that require wrapper scripts, libtool just
 ignores the wrapper script and installs the correct binary:
 
 @example
-burger# libtool --mode=install -c hell /usr/local/bin/hell
+burger# libtool --mode=install install -c hell /usr/local/bin/hell
 install -c @value{objdir}/hell /usr/local/bin/hell
 burger#
 @end example
@@ -1271,6 +1271,62 @@ stripped or the link will fail.  In cases where these duplications are
 required, this option will preserve them, only stripping the libraries
 that libtool knows it can safely.
 
+@item --no-finish
+Do not execute finish_cmds (disabled by default). This option is for
+specifying that testing of local changes to shared libraries is being
+performed so that ldconfig will not alter the shared library cache, which
+is an issue observed on OpenBSD 7.5. This option should be combined with
+the usage of @option{--mode=install} and @option{--mode=finish} to have
+any effect. Prior to utilizing this option, the shared library cache must
+not contain links to the listed install directory for shared libraries
+undergoing testing; otherwise, it will have no useful effect. In OpenBSD,
+the shared library cache can be reordered to prefer directories for
+testing shared libraries over the directories already listed in the shared
+library cache with @option{--reorder-cache=@var{shared_lib_dirs}}.
+
+@item --reorder-cache=@var{shared_lib_dirs}
+Reorder the shared library cache by providing the preferred directories
+(@var{shared_lib_dirs}) to link shared libraries from. The previous
+shared library cache is unconfigured, and the preferred directories are
+configured with the previous directories appended to the end (if not in
+the preferred directory list)@footnote{Additionally, all directories
+that no longer exist will be removed from the shared library cache.}.
+This option is currently only available on OpenBSD where @code{make
+install} has been required before @code{make check} for the shared
+library cache to be updated.
+
+This option is essentially a wrapper for executing @command{ldconfig},
+and it should be used as an independent option before and after testing
+changes to shared libraries. Below are some usage examples:
+
+@example
+$ @kbd{libtool --reorder-cache=/tmp/testing}
+Original: /usr/lib /usr/X11R6/lib /usr/local/lib
+Reordered: /tmp/testing /usr/lib /usr/X11R6/lib /usr/local/lib
+$ @kbd{libtool --reorder-cache=/usr/lib:/usr/X11R6/lib:/usr/local/lib}
+Original: /tmp/testing /usr/lib /usr/X11R6/lib /usr/local/lib
+Reordered: /usr/lib /usr/X11R6/lib /usr/local/lib /tmp/testing
+@end example
+
+@example
+$ @kbd{libtool --reorder-cache=/tmp/testing}
+Original: /usr/lib /usr/X11R6/lib /usr/local/lib
+Reordered: /tmp/testing /usr/lib /usr/X11R6/lib /usr/local/lib
+$ @kbd{rm -rf /tmp/testing}
+$ @kbd{libtool --reorder-cache=/usr/lib:/usr/X11R6/lib:/usr/local/lib}
+Original: /tmp/testing /usr/lib /usr/X11R6/lib /usr/local/lib
+Reordered: /usr/lib /usr/X11R6/lib /usr/local/lib
+@end example
+
+@example
+$ @kbd{libtool --reorder-cache=/tmp/testing:/usr/local/lib:/home/user/dir}
+Original: /usr/lib /usr/X11R6/lib /usr/local/lib
+Reordered: /tmp/testing /usr/local/lib /home/user/dir /usr/lib /usr/X11R6/lib
+$ @kbd{libtool --reorder-cache=/usr/lib /usr/X11R6/lib /usr/local/lib}
+Original: /tmp/testing /usr/local/lib /home/user/dir /usr/lib /usr/X11R6/lib
+Reordered: /usr/lib /usr/X11R6/lib /usr/local/lib /tmp/testing /home/user/dir
+@end example
+
 @item --quiet
 @itemx --silent
 Do not print out any progress or informational messages.
@@ -1278,7 +1334,7 @@ Do not print out any progress or informational messages.
 @item -v
 @itemx --verbose
 Print out progress and informational messages (enabled by default),
-as well as additional messages not ordinary seen by default.
+as well as additional messages not ordinarily seen by default.
 
 @item --no-quiet
 @itemx --no-silent
@@ -1318,14 +1374,21 @@ can be achieved using either option @option{-v} or option
 
 @item --version
 Print libtool version information and exit.
+
+@item -W
+@itemx --warnings=@var{CATEGORY}
+Report the warnings falling in category @var{CATEGORY}. The default
+category is @command{all}. To disable warnings, use the category
+@command{none}.
+
 @end table
 
 The current @command{libtool} implementation is done with a shell script
 that needs to be invoked by the shell that @command{configure} chose for
-configuring @command{libtool} (@pxref{config.status Invocation, , The
-Autoconf Manual, autoconf, The Autoconf Manual}).  This shell is set in
-the she-bang (@samp{#!}) line of the @command{libtool} script.  Using a
-different shell may cause undefined behavior.
+configuring @command{libtool} (@pxref{, , config.status Invocation,
+autoconf, The Autoconf Manual}).  This shell is set in the she-bang
+(@samp{#!}) line of the @command{libtool} script.  Using a different
+shell may cause undefined behavior.
 
 The @var{mode-args} are a variable number of arguments, depending on the
 selected operation mode.  In general, each @var{mode-arg} is interpreted
@@ -1483,7 +1546,13 @@ Allow symbols from @var{output-file} to be resolved with @code{dlsym}
 @item -export-symbols @var{symfile}
 Tells the linker to export only the symbols listed in @var{symfile}.
 The symbol file should end in @file{.sym} and must contain the name of one
-symbol per line.  This option has no effect on some platforms.
+symbol per line.  This option has no effect:
+@itemize @bullet
+@item
+on static libraries, and
+@item
+on shared libraries on some platforms, such as AIX and Haiku.
+@end itemize
 By default all symbols are exported.
 
 @item -export-symbols-regex @var{regex}
@@ -1614,6 +1683,12 @@ supplies the same interface (@pxref{Linking with dlopened modules}).
 @itemx -Xcompiler @var{flag}
 Pass a linker-specific flag directly to the compiler.  With @code{-Wc,},
 multiple flags may be separated by commas, whereas @code{-Xcompiler }
+passes through commas unchanged.
+
+@item -Wa,@var{flag}
+@itemx -Xassembler @var{flag}
+Pass a linker-specific flag directly to the assembler.  With @code{-Wa,},
+multiple flags may be separated by commas, whereas @code{-Xassembler }
 passes through commas unchanged.
 
 @item -Wl,@var{flag}
@@ -1789,8 +1864,8 @@ These individual steps are often automated with @command{autoreconf}.
 
 Here is a diagram showing how such a typical Libtool configuration works
 when preparing a package for distribution, assuming that @file{m4} has
-been chosen as location for additional Autoconf macros, and
-@file{build-aux} as location for auxiliary build tools (@pxref{Input,,
+been chosen as the location for additional Autoconf macros, and
+@file{build-aux} as the location for auxiliary build tools (@pxref{Input,,
 The Autoconf Manual, autoconf, The Autoconf Manual}):
 
 @example
@@ -1971,9 +2046,11 @@ mirror, install it, and start using it.
 Learn how to write @file{Makefile} rules by hand.  They're sometimes complex,
 but if you're clever enough to write rules for compiling your old
 libraries, then you should be able to figure out new rules for libtool
-libraries (hint: examine the @file{Makefile.in} in the @file{tests/demo}
-subdirectory of the libtool distribution@dots{} note especially that it
-was automatically generated from the @file{Makefile.am} by Automake).
+libraries (hint: examine the @file{Makefile.in} in the
+@file{tests/testsuite.dir/027} subdirectory, generated from the Autotest
+labeled 'link against a preloaded static library' in @file{tests/demo.at},
+of the libtool distribution; note especially that it was automatically
+generated from the @file{Makefile.am} by Automake).
 @end enumerate
 
 @node Using Automake
@@ -1984,7 +2061,7 @@ Libtool library support is implemented under the @samp{LTLIBRARIES}
 primary.
 
 Here are some samples from the Automake @file{Makefile.am} in the
-libtool distribution's @file{demo} subdirectory.
+libtool distribution's @file{tests/demo.at}.
 
 First, to link a program against a libtool library, just use the
 @samp{program_LDADD}@footnote{@c
@@ -2036,6 +2113,34 @@ libraries listed as @code{noinst_LTLIBRARIES}), so you
 should not specify it.
 
 @xref{A Shared Library, Building a Shared Library, The Automake Manual,
+automake, The Automake Manual}, for more information.
+
+When building libtool archives which depend on built sources (for example a
+generated header file), you may find it necessary to manually record
+these dependencies.
+Because libtool archives generate object file names manually recording these
+dependencies is not as straightforward as the examples in Automake's manual
+describe.
+This affects header files in particular, because simply listing them as
+@samp{nodist_libfoo_la_SOURCES} will not cause Automake to establish a
+dependent relationship for the object files of @file{libfoo.la}.
+A useful trick (although somewhat imprecise) is to manually record built
+sources used by a libtool archive as dependencies of all the objects for that
+library as shown below (as opposed to a particular object file):
+
+@example
+# Build a libtool library, libhello.la which depends on a generated header.
+hello.h:
+	echo '#define HELLO_MESSAGE  "Hello, World!"' > $@@
+BUILT_SOURCES = hello.h
+CLEANFILES = hello.h
+nodist_libhello_la_SOURCES = hello.h
+libhello_la_SOURCES = hello.c foo.h foo.c bar.h bar.c
+# Manually record hello.h as a prerequisite for all objects in libhello.la
+$(libhello_la_OBJECTS): hello.h
+@end example
+
+@xref{Built Sources Example, Recording Dependencies manually, The Automake Manual,
 automake, The Automake Manual}, for more information.
 
 @node Configuring
@@ -2090,8 +2195,8 @@ LT_PREREQ([@value{VERSION}])
 @defmacx AC_PROG_LIBTOOL
 @defmacx AM_PROG_LIBTOOL
 Add support for the @option{--enable-shared}, @option{--disable-shared},
-@option{--enable-static}, @option{--disable-static}, @option{--with-pic}, and
-@option{--without-pic} @code{configure} flags.@footnote{@code{LT_INIT} requires
+@option{--enable-static}, @option{--disable-static}, @option{--enable-pic}, and
+@option{--disable-pic} @code{configure} flags.@footnote{@code{LT_INIT} requires
 that you define the @file{Makefile} variable @code{top_builddir} in your
 @file{Makefile.in}.  Automake does this automatically, but Autoconf
 users should set it to the relative path to the top of your build
@@ -2134,12 +2239,13 @@ behaves similarly, but it uses @option{--enable-static} and
 The package name @samp{default} matches any packages that have not set
 their name in the @code{PACKAGE} environment variable.
 
-The @option{--with-pic} and @option{--without-pic} configure flags can be used
-to specify whether or not @command{libtool} uses PIC objects.  By default,
+The @option{--enable-pic} and @option{--disable-pic} configure flags can be
+used to specify whether or not @command{libtool} uses PIC objects.  By default,
 @command{libtool} uses PIC objects for shared libraries and non-PIC objects for
-static libraries.  The @option{--with-pic} option also accepts a comma-separated
-list of package names.  Specifying @option{--with-pic=@var{pkgs}} is the same
-as configuring every package in @var{pkgs} with @option{--with-pic} and every
+static libraries.
+The @option{--enable-pic} option also accepts a comma-separated
+list of package names.  Specifying @option{--enable-pic=@var{pkgs}} is the same
+as configuring every package in @var{pkgs} with @option{--enable-pic} and every
 other package with the default configuration.  The package name @samp{default}
 is treated the same as for @option{--enable-shared} and
 @option{--enable-static}.
@@ -2180,7 +2286,7 @@ support dlopening.
 This option should be used if the package has been ported to build clean
 dlls on win32 platforms.  Usually this means that any library data items
 are exported with @code{__declspec(dllexport)} and imported with
-@code{__declspec(dllimport)}.  If this macro is not used, libtool will
+@code{__declspec(dllimport)}.  If this option is not used, libtool will
 assume that the package libraries are not dll clean and will build only
 static libraries on win32 hosts.
 
@@ -2192,7 +2298,7 @@ in link mode from the package @code{Makefile}.  Naturally, if you pass
 @item aix-soname=aix
 @itemx aix-soname=svr4
 @itemx aix-soname=both
-Enable the @option{--with-aix-soname} to @command{configure}, which the
+Enable the @option{--enable-aix-soname} to @command{configure}, which the
 user can pass to override the given default.
 
 By default (and @strong{always} in releases prior to 2.4.4), Libtool always
@@ -2206,13 +2312,13 @@ shared archives are built from shared objects, without any filename-based
 versioning; and without @option{-brtl} no shared archives are built at all.
 
 When @code{aix-soname=svr4} option is given, or the
-@option{--with-aix-soname=svr4} @command{configure} option is passed, static
+@option{--enable-aix-soname=svr4} @command{configure} option is passed, static
 archives are always created from static objects, even without @option{-brtl}
 in @code{LDFLAGS}. Shared archives are made from shared objects, and filename
 based versioning is enabled.
 
 When @code{aix-soname=both} option is given, or the
-@option{--with-aix-soname=svr4} @command{configure} option is passed, static
+@option{--enable-aix-soname=svr4} @command{configure} option is passed, static
 archives are built traditionally (as @option{aix-soname=aix}), and both
 kinds of shared archives are built. The @code{.la} pseudo-archive specifies
 one or the other depending on whether @option{-brtl} is specified in
@@ -2253,12 +2359,12 @@ specifying @option{--enable-static} to @command{configure}.
 @item pic-only
 Change the default behaviour for @command{libtool} to try to use only
 PIC objects.  The user may still override this default by specifying
-@option{--without-pic} to @command{configure}.
+@option{--disable-pic} to @command{configure}.
 
 @item no-pic
 Change the default behaviour of @command{libtool} to try to use only
 non-PIC objects.  The user may still override this default by
-specifying @option{--with-pic} to @command{configure}.
+specifying @option{--enable-pic} to @command{configure}.
 
 @end table
 
@@ -2426,7 +2532,7 @@ system, this variable can be used to modify that path list, as follows
 (@code{LT_SYS_LIBRARY_PATH} is a colon-delimited list like @code{PATH}):
 @itemize @bullet
 @item @code{path:}
-The heuristically determined paths will be appened after the trailing
+The heuristically determined paths will be appended after the trailing
 colon;
 @item @code{:path}
 The heuristically determined paths will be prepended before the leading
@@ -2829,8 +2935,7 @@ and what special considerations you need to make if you do not use C.
 @end menu
 
 @node C++ libraries
-@section Writing libraries for C++
-@c FIXME: in the TOC, the ++ is too large (seems to be math mode)
+@section Writing libraries for C@code{++}
 @cindex trouble with C++
 @cindex pitfalls using C++
 @cindex C++, pitfalls
@@ -3250,11 +3355,31 @@ Non-ANSI compilers will report errors if functions are prototyped.
 These complications mean that your library interface headers must use
 some C preprocessor magic to be usable by each of the above compilers.
 
-@file{foo.h} in the @file{tests/demo} subdirectory of the libtool
-distribution serves as an example for how to write a header file that
+@file{foo.h}, defined in the @file{tests/demo.at} Autotest of the libtool
+distribution, serves as an example for how to write a header file that
 can be safely installed in a system directory.
 
 Here are the relevant portions of that file:
+
+@example
+#ifndef FOO_H
+#define FOO_H
+
+#ifdef __cplusplus
+extern "C" @{
+#endif
+
+int foo (void);
+int hello (void);
+
+#ifdef __cplusplus
+@}
+#endif
+
+#endif /* !FOO_H */
+@end example
+
+This can also be achieved by utilizing macros:
 
 @example
 /* BEGIN_C_DECLS should be used at the beginning of your declarations,
@@ -3283,11 +3408,11 @@ Here are the relevant portions of that file:
 #endif
 @end example
 
-These macros are used in @file{foo.h} as follows:
+These macros can be used in @file{foo.h} as follows:
 
 @example
 #ifndef FOO_H
-#define FOO_H 1
+#define FOO_H
 
 /* The above macro definitions. */
 #include "@dots{}"
@@ -3524,9 +3649,9 @@ using the @option{-dlopen} or @option{-dlpreopen} flags when you link your
 program (@pxref{Link mode}).
 
 @deftp {Data Type} {lt_dlsymlist} typedef struct @
-  @{ @w{const char *@var{name};} @w{void *@var{address};} @} lt_dlsymlist
-The @var{name} attribute is a null-terminated character string of the
-symbol name, such as @code{"fprintf"}.  The @var{address} attribute is a
+  @{ @w{const char *@code{name};} @w{void *@code{address};} @} lt_dlsymlist
+The @code{name} attribute is a null-terminated character string of the
+symbol name, such as @code{"fprintf"}.  The @code{address} attribute is
 generic pointer to the appropriate object, such as @code{&fprintf}.
 @end deftp
 
@@ -3534,10 +3659,10 @@ generic pointer to the appropriate object, such as @code{&fprintf}.
 An array of @code{lt_dlsymlist} structures, representing all the preloaded
 symbols linked into the program proper.  For each module
 @option{-dlpreopen}ed by the Libtool linked program
-there is an element with the @var{name} of the module and an @var{address}
+there is an element with the @code{name} of the module and an @code{address}
 of @code{0}, followed by all symbols exported from this file.
 For the executable itself the special name @samp{@@PROGRAM@@} is used.
-The last element of all has a @var{name} and @var{address} of
+The last element of all has a @code{name} and @code{address} of
 @code{0}.
 
 To facilitate inclusion of symbol lists into libraries,
@@ -3883,14 +4008,9 @@ your application to use this version of libltdl.
 @noindent
 Note that libltdl is not well tested in a multithreaded environment,
 though the intention is that it should work (@pxref{Thread Safety
-in libltdl, , Using libltdl in a multi threaded environment}).  It was
-reported that GNU/Linux's glibc 2.0's @code{dlopen} with
-@samp{RTLD_LAZY} (that libltdl uses by default) is not thread-safe,
-but this problem is supposed to be fixed in glibc 2.1.  On the other
-hand, @samp{RTLD_NOW} was reported to introduce problems in
-multi-threaded applications on FreeBSD@.  Working around these problems
-is left as an exercise for the reader; contributions are certainly
-welcome.
+in libltdl, , Using libltdl in a multi threaded environment}). If there are
+any issues, working around them is left as an exercise for the reader;
+contributions are certainly welcome.
 
 @noindent
 The following macros are defined by including @file{ltdl.h}:
@@ -3956,10 +4076,10 @@ portability you should try to ensure that you only pass
 @option{-module} flag.}.
 
 Unresolved symbols in the module are resolved using its dependency
-libraries and previously dlopened modules.  If the executable using
-this module was linked with the @option{-export-dynamic} flag, then the
-global symbols in the executable will also be used to resolve
-references in the module.
+libraries and, on some platforms, previously dlopened modules.  If
+the executable using this module was linked with the
+@option{-export-dynamic} flag, then the global symbols in the executable
+will also be used to resolve references in the module.
 
 If @var{filename} is @code{NULL} and the program was linked with
 @option{-export-dynamic} or @option{-dlopen self}, @code{lt_dlopen} will
@@ -4295,16 +4415,16 @@ Some of the internal information about each loaded module that is
 maintained by libltdl is available to the user, in the form of this
 structure:
 
-@deftypefn {Type} {struct} lt_dlinfo @{ @w{char *@var{filename};} @
-  @w{char *@var{name};} @w{int @var{ref_count};} @
-  @w{int @var{is_resident};} @w{int @var{is_symglobal};} @
-  @w{int @var{is_symlocal};}@}
+@deftypefn {Type} {struct} lt_dlinfo @{ @w{char *@code{filename};} @
+  @w{char *@code{name};} @w{int @code{ref_count};} @
+  @w{int @code{is_resident};} @w{int @code{is_symglobal};} @
+  @w{int @code{is_symlocal};}@}
 @code{lt_dlinfo} is used to store information about a module.
-The @var{filename} attribute is a null-terminated character string of
+The @code{filename} attribute is a null-terminated character string of
 the real module file name.  If the module is a libtool module then
-@var{name} is its module name (e.g.@: @code{"libfoo"} for
+@code{name} is its module name (e.g.@: @code{"libfoo"} for
 @code{"dir/libfoo.la"}), otherwise it is set to @code{NULL}.  The
-@var{ref_count} attribute is a reference counter that describes how
+@code{ref_count} attribute is a reference counter that describes how
 often the same module is currently loaded. The remaining fields can
 be compared to any hints that were passed to @code{lt_dlopenadvise}
 to determine whether the underlying loader was able to follow them.
@@ -4519,7 +4639,7 @@ level types.
 @code{lt_user_data} is used for specifying loader instance data.
 @end deftp
 
-@deftypefn {Type} {struct} lt_user_dlloader @{@w{const char *@var{sym_prefix};} @w{lt_module_open *@var{module_open};} @w{lt_module_close *@var{module_close};} @w{lt_find_sym *@var{find_sym};} @w{lt_dlloader_exit *@var{dlloader_exit};} @}
+@deftypefn {Type} {struct} lt_user_dlloader @{@w{const char *@code{sym_prefix};} @w{lt_module_open *@code{module_open};} @w{lt_module_close *@code{module_close};} @w{lt_find_sym *@code{find_sym};} @w{lt_dlloader_exit *@code{dlloader_exit};} @}
 If you want to define a new way to open dynamic modules, and have the
 @code{lt_dlopen} API use it, you need to instantiate one of these
 structures and pass it to @code{lt_dlloader_add}.  You can pass whatever
@@ -5149,435 +5269,27 @@ determine what the problem is, and how to resolve it.
 @section The libtool test suite
 @cindex test suite
 
-Libtool comes with two integrated sets of tests to check that your build
-is sane, that test its capabilities, and report obvious bugs in the
-libtool program.  These tests, too, are constantly evolving, based on
-past problems with libtool, and known deficiencies in other operating
-systems.
+Libtool comes with an integrated set of tests to check that your build is sane,
+that test its capabilities, and report obvious bugs in the libtool program.  The
+test suite is based on Autotest from Autoconf (@pxref{testsuite Invocation, ,
+Generating Test Suites with Autotest, autoconf, The Autoconf Manual}).  These
+tests, too, are constantly evolving, based on past problems with libtool, and
+known deficiencies in other operating systems.
 
-As described in the @file{README} file, you may run @kbd{make -k check}
-after you have built libtool (possibly before you install it)
-to make sure that it meets basic functional requirements.
+As described in the @file{README} file, you may run @kbd{make -k check} after
+you have built libtool (possibly before you install it) to make sure that it
+meets basic functional requirements.
 
 @menu
-* Test descriptions::           The contents of the old test suite.
+* Test descriptions::           The contents of the test suite.
 * When tests fail::             What to do when a test fails.
 @end menu
 
 @node Test descriptions
 @subsection Description of test suite
 
-Here is a list of the current programs in the old test suite, and what
-they test for:
 
-@table @file
-
-@item cdemo-conf.test
-@itemx cdemo-make.test
-@itemx cdemo-exec.test
-@itemx cdemo-static.test
-@itemx cdemo-static-make.test
-@itemx cdemo-static-exec.test
-@itemx cdemo-shared.test
-@itemx cdemo-shared-make.test
-@itemx cdemo-shared-exec.test
-@itemx cdemo-undef.test
-@itemx cdemo-undef-make.test
-@itemx cdemo-undef-exec.test
-@pindex cdemo-conf.test
-@pindex cdemo-make.test
-@pindex cdemo-exec.test
-@pindex cdemo-static.test
-@pindex cdemo-static-make.test
-@pindex cdemo-static-exec.test
-@pindex cdemo-shared.test
-@pindex cdemo-shared-make.test
-@pindex cdemo-shared-exec.test
-@pindex cdemo-undef.test
-@pindex cdemo-undef-make.test
-@pindex cdemo-undef-exec.test
-These programs check to see that the @file{tests/cdemo} subdirectory of
-the libtool distribution can be configured and built correctly.
-
-The @file{tests/cdemo} subdirectory contains a demonstration of libtool
-convenience libraries, a mechanism that allows build-time static
-libraries to be created, in a way that their components can be later
-linked into programs or other libraries, even shared ones.
-
-The tests matching @file{cdemo-*make.test} and @file{cdemo-*exec.test}
-are executed three times, under three different libtool configurations:
-@file{cdemo-conf.test} configures @file{cdemo/libtool} to build both
-static and shared libraries (the default for platforms that support
-both), @file{cdemo-static.test} builds only static libraries
-(@samp{--disable-shared}), and @file{cdemo-shared.test} builds only
-shared libraries (@samp{--disable-static}).
-
-The test @file{cdemo-undef.test} tests the generation of shared
-libraries with undefined symbols on systems that allow this.
-
-@item demo-conf.test
-@itemx demo-make.test
-@itemx demo-exec.test
-@itemx demo-inst.test
-@itemx demo-unst.test
-@itemx demo-static.test
-@itemx demo-static-make.test
-@itemx demo-static-exec.test
-@itemx demo-static-inst.test
-@itemx demo-static-unst.test
-@itemx demo-shared.test
-@itemx demo-shared-make.test
-@itemx demo-shared-exec.test
-@itemx demo-shared-inst.test
-@itemx demo-shared-unst.test
-@itemx demo-nofast.test
-@itemx demo-nofast-make.test
-@itemx demo-nofast-exec.test
-@itemx demo-nofast-inst.test
-@itemx demo-nofast-unst.test
-@itemx demo-pic.test
-@itemx demo-pic-make.test
-@itemx demo-pic-exec.test
-@itemx demo-nopic.test
-@itemx demo-nopic-make.test
-@itemx demo-nopic-exec.test
-@pindex demo-conf.test
-@pindex demo-make.test
-@pindex demo-exec.test
-@pindex demo-inst.test
-@pindex demo-unst.test
-@pindex demo-static.test
-@pindex demo-static-make.test
-@pindex demo-static-exec.test
-@pindex demo-static-inst.test
-@pindex demo-static-unst.test
-@pindex demo-shared.test
-@pindex demo-shared-make.test
-@pindex demo-shared-exec.test
-@pindex demo-shared-inst.test
-@pindex demo-shared-unst.test
-@pindex demo-nofast.test
-@pindex demo-nofast-make.test
-@pindex demo-nofast-exec.test
-@pindex demo-nofast-inst.test
-@pindex demo-nofast-unst.test
-@pindex demo-pic.test
-@pindex demo-pic-make.test
-@pindex demo-pic-exec.test
-@pindex demo-nopic.test
-@pindex demo-nopic-make.test
-@pindex demo-nopic-exec.test
-These programs check to see that the @file{tests/demo} subdirectory of
-the libtool distribution can be configured, built, installed, and
-uninstalled correctly.
-
-The @file{tests/demo} subdirectory contains a demonstration of a trivial
-package that uses libtool.  The tests matching @file{demo-*make.test},
-@file{demo-*exec.test}, @file{demo-*inst.test} and
-@file{demo-*unst.test} are executed four times, under four different
-libtool configurations: @file{demo-conf.test} configures
-@file{demo/libtool} to build both static and shared libraries,
-@file{demo-static.test} builds only static libraries
-(@option{--disable-shared}), and @file{demo-shared.test} builds only
-shared libraries (@option{--disable-static}).
-@file{demo-nofast.test} configures @file{demo/libtool} to
-disable the fast-install mode (@option{--enable-fast-install=no}).
-@file{demo-pic.test} configures @file{demo/libtool} to
-prefer building PIC code (@option{--with-pic}), @file{demo-nopic.test}
-to prefer non-PIC code (@option{--without-pic}).
-
-@item demo-deplibs.test
-@pindex demo-deplibs.test
-Many systems cannot link static libraries into shared libraries.
-libtool uses a @code{deplibs_check_method} to prevent such cases.
-This tests checks whether libtool's @code{deplibs_check_method}
-works properly.
-
-@item demo-hardcode.test
-@pindex demo-hardcode.test
-On all systems with shared libraries, the location of the library can be
-encoded in executables that are linked against it @pxref{Linking
-executables}.  This test checks under what conditions your system
-linker hardcodes the library location, and guarantees that they
-correspond to libtool's own notion of how your linker behaves.
-
-@item demo-relink.test
-@itemx depdemo-relink.test
-@pindex demo-relink.test
-@pindex depdemo-relink.test
-These tests check whether variable @code{shlibpath_overrides_runpath} is
-properly set.  If the test fails, it will indicate what the variable should
-have been set to.
-
-@item demo-noinst-link.test
-@pindex demo-noinst-link.test
-Checks whether libtool will not try to link with a previously installed
-version of a library when it should be linking with a just-built one.
-
-@item depdemo-conf.test
-@itemx depdemo-make.test
-@itemx depdemo-exec.test
-@itemx depdemo-inst.test
-@itemx depdemo-unst.test
-@itemx depdemo-static.test
-@itemx depdemo-static-make.test
-@itemx depdemo-static-exec.test
-@itemx depdemo-static-inst.test
-@itemx depdemo-static-unst.test
-@itemx depdemo-shared.test
-@itemx depdemo-shared-make.test
-@itemx depdemo-shared-exec.test
-@itemx depdemo-shared-inst.test
-@itemx depdemo-shared-unst.test
-@itemx depdemo-nofast.test
-@itemx depdemo-nofast-make.test
-@itemx depdemo-nofast-exec.test
-@itemx depdemo-nofast-inst.test
-@itemx depdemo-nofast-unst.test
-@pindex depdemo-conf.test
-@pindex depdemo-make.test
-@pindex depdemo-exec.test
-@pindex depdemo-inst.test
-@pindex depdemo-unst.test
-@pindex depdemo-static.test
-@pindex depdemo-static-make.test
-@pindex depdemo-static-exec.test
-@pindex depdemo-static-inst.test
-@pindex depdemo-static-unst.test
-@pindex depdemo-shared.test
-@pindex depdemo-shared-make.test
-@pindex depdemo-shared-exec.test
-@pindex depdemo-shared-inst.test
-@pindex depdemo-shared-unst.test
-@pindex depdemo-nofast.test
-@pindex depdemo-nofast-make.test
-@pindex depdemo-nofast-exec.test
-@pindex depdemo-nofast-inst.test
-@pindex depdemo-nofast-unst.test
-These programs check to see that the @file{tests/depdemo} subdirectory
-of the libtool distribution can be configured, built, installed, and
-uninstalled correctly.
-
-The @file{tests/depdemo} subdirectory contains a demonstration of
-inter-library dependencies with libtool.  The test programs link some
-interdependent libraries.
-
-The tests matching @file{depdemo-*make.test}, @file{depdemo-*exec.test},
-@file{depdemo-*inst.test} and @file{depdemo-*unst.test} are executed
-four times, under four different libtool configurations:
-@file{depdemo-conf.test} configures @file{depdemo/libtool} to build both
-static and shared libraries, @file{depdemo-static.test} builds only static
-libraries (@option{--disable-shared}), and @file{depdemo-shared.test} builds
-only shared libraries (@option{--disable-static}).
-@file{depdemo-nofast.test} configures @file{depdemo/libtool} to
-disable the fast-install mode (@option{--enable-fast-install=no}).
-
-@item mdemo-conf.test
-@itemx mdemo-make.test
-@itemx mdemo-exec.test
-@itemx mdemo-inst.test
-@itemx mdemo-unst.test
-@itemx mdemo-static.test
-@itemx mdemo-static-make.test
-@itemx mdemo-static-exec.test
-@itemx mdemo-static-inst.test
-@itemx mdemo-static-unst.test
-@itemx mdemo-shared.test
-@itemx mdemo-shared-make.test
-@itemx mdemo-shared-exec.test
-@itemx mdemo-shared-inst.test
-@itemx mdemo-shared-unst.test
-@pindex mdemo-conf.test
-@pindex mdemo-make.test
-@pindex mdemo-exec.test
-@pindex mdemo-inst.test
-@pindex mdemo-unst.test
-@pindex mdemo-static.test
-@pindex mdemo-static-make.test
-@pindex mdemo-static-exec.test
-@pindex mdemo-static-inst.test
-@pindex mdemo-static-unst.test
-@pindex mdemo-shared.test
-@pindex mdemo-shared-make.test
-@pindex mdemo-shared-exec.test
-@pindex mdemo-shared-inst.test
-@pindex mdemo-shared-unst.test
-These programs check to see that the @file{tests/mdemo} subdirectory of
-the libtool distribution can be configured, built, installed, and
-uninstalled correctly.
-
-The @file{tests/mdemo} subdirectory contains a demonstration of a
-package that uses libtool and the system independent dlopen wrapper
-@file{libltdl} to load modules.  The library @file{libltdl} provides a
-dlopen wrapper for various platforms (POSIX)
-including support for dlpreopened modules (@pxref{Dlpreopening}).
-
-The tests matching @file{mdemo-*make.test}, @file{mdemo-*exec.test},
-@file{mdemo-*inst.test} and @file{mdemo-*unst.test} are executed
-three times, under three different libtool configurations:
-@file{mdemo-conf.test} configures @file{mdemo/libtool} to build both
-static and shared libraries, @file{mdemo-static.test} builds only static
-libraries (@option{--disable-shared}), and @file{mdemo-shared.test} builds
-only shared libraries (@option{--disable-static}).
-
-@item mdemo-dryrun.test
-@pindex mdemo-dryrun.test
-This test checks whether libtool's @option{--dry-run} mode works properly.
-
-@item mdemo2-conf.test
-@itemx mdemo2-exec.test
-@itemx mdemo2-make.test
-@pindex mdemo2-conf.test
-@pindex mdemo2-exec.test
-@pindex mdemo2-make.test
-These programs check to see that the @file{tests/mdemo2} subdirectory of
-the libtool distribution can be configured, built, and executed
-correctly.
-
-The @file{tests/mdemo2} directory contains a demonstration of a package
-that attempts to link with a library (from the @file{tests/mdemo}
-directory) that itself does dlopening of libtool modules.
-
-@item link.test
-@pindex link.test
-This test guarantees that linking directly against a non-libtool static
-library works properly.
-
-@item link-2.test
-@pindex link-2.test
-This test makes sure that files ending in @file{.lo} are never linked
-directly into a program file.
-
-@item nomode.test
-@pindex nomode.test
-Check whether we can actually get help for libtool.
-
-@item objectlist.test
-@pindex objectlist.test
-Check that a nonexistent objectlist file is properly detected.
-
-@item pdemo-conf.test
-@itemx pdemo-make.test
-@itemx pdemo-exec.test
-@itemx pdemo-inst.test
-@pindex pdemo-conf.test
-@pindex pdemo-make.test
-@pindex pdemo-exec.test
-@pindex pdemo-inst.test
-These programs check to see that the @file{tests/pdemo} subdirectory of
-the libtool distribution can be configured, built, and executed
-correctly.
-
-The @file{pdemo-conf.test} lowers the @code{max_cmd_len} variable in the
-generated libtool script to test the measures to evade command line
-length limitations.
-
-@item quote.test
-@pindex quote.test
-This program checks libtool's metacharacter quoting.
-
-@item sh.test
-@pindex sh.test
-Checks for some nonportable or dubious or undesired shell constructs in
-shell scripts.
-
-@item suffix.test
-@pindex suffix.test
-When other programming languages are used with libtool (@pxref{Other
-languages}), the source files may end in suffixes other than @file{.c}.
-This test validates that libtool can handle suffixes for all the file
-types that it supports, and that it fails when the suffix is invalid.
-
-@item tagdemo-conf.test
-@itemx tagdemo-make.test
-@itemx tagdemo-exec.test
-@itemx tagdemo-static.test
-@itemx tagdemo-static-make.test
-@itemx tagdemo-static-exec.test
-@itemx tagdemo-shared.test
-@itemx tagdemo-shared-make.test
-@itemx tagdemo-shared-exec.test
-@itemx tagdemo-undef.test
-@itemx tagdemo-undef-make.test
-@itemx tagdemo-undef-exec.test
-@pindex tagdemo-conf.test
-@pindex tagdemo-make.test
-@pindex tagdemo-exec.test
-@pindex tagdemo-static.test
-@pindex tagdemo-static-make.test
-@pindex tagdemo-static-exec.test
-@pindex tagdemo-shared.test
-@pindex tagdemo-shared-make.test
-@pindex tagdemo-shared-exec.test
-@pindex tagdemo-undef.test
-@pindex tagdemo-undef-make.test
-@pindex tagdemo-undef-exec.test
-These programs check to see that the @file{tests/tagdemo} subdirectory
-of the libtool distribution can be configured, built, and executed
-correctly.
-
-The @file{tests/tagdemo} directory contains a demonstration of a package
-that uses libtool's multi-language support through configuration tags.
-It generates a library from C++ sources, which is then linked to a C++
-program.
-
-@item f77demo-conf.test
-@itemx f77demo-make.test
-@itemx f77demo-exec.test
-@itemx f77demo-static.test
-@itemx f77demo-static-make.test
-@itemx f77demo-static-exec.test
-@itemx f77demo-shared.test
-@itemx f77demo-shared-make.test
-@itemx f77demo-shared-exec.test
-@pindex f77demo-conf.test
-@pindex f77demo-make.test
-@pindex f77demo-exec.test
-@pindex f77demo-static.test
-@pindex f77demo-static-make.test
-@pindex f77demo-static-exec.test
-@pindex f77demo-shared.test
-@pindex f77demo-shared-make.test
-@pindex f77demo-shared-exec.test
-These programs check to see that the @file{tests/f77demo} subdirectory
-of the libtool distribution can be configured, built, and executed
-correctly.
-
-The @file{tests/f77demo} tests test Fortran 77 support in libtool by
-creating libraries from Fortran 77 sources, and mixed Fortran and C
-sources, and a Fortran 77 program to use the former library, and a C
-program to use the latter library.
-
-@item fcdemo-conf.test
-@itemx fcdemo-make.test
-@itemx fcdemo-exec.test
-@itemx fcdemo-static.test
-@itemx fcdemo-static-make.test
-@itemx fcdemo-static-exec.test
-@itemx fcdemo-shared.test
-@itemx fcdemo-shared-make.test
-@itemx fcdemo-shared-exec.test
-@pindex fcdemo-conf.test
-@pindex fcdemo-make.test
-@pindex fcdemo-exec.test
-@pindex fcdemo-static.test
-@pindex fcdemo-static-make.test
-@pindex fcdemo-static-exec.test
-@pindex fcdemo-shared.test
-@pindex fcdemo-shared-make.test
-@pindex fcdemo-shared-exec.test
-These programs check to see that the @file{tests/fcdemo} subdirectory
-of the libtool distribution can be configured, built, and executed
-correctly.
-
-The @file{tests/fcdemo} is similar to the @file{tests/f77demo}
-directory, except that Fortran 90 is used in combination with the
-@samp{FC} interface provided by Autoconf and Automake.
-
-@end table
-
-The new, Autotest-based test suite uses keywords to classify certain
-test groups:
+The test suite uses keywords to classify certain test groups:
 
 @table @samp
 @item CXX
@@ -5629,32 +5341,375 @@ Windows.  Conversely, the target @samp{check-interactive} runs the
 complement of tests and might require closing popup windows about DLL
 load errors on Windows.
 
+Here is a list of the some of the current files in the test suite, and what
+they test for:
+
+@table @file
+
+@item @file{tests/am-subdirs.at}
+Tests that a binary can be built and ran from outside of the sub-directory that
+it is built and ran in.
+
+@item @file{tests/archive-in-archive.at}
+Tests convenience archive within another convenience archive.
+Compiles @code{foo()} in @file{libfoo}, then compiles @file{libfoo} (and
+@code{bar()} function) into @file{libbar}.
+
+@item @file{tests/bindir.at}
+Tests include a demonstration of various scenarios related to using the
+@option{-bindir} option with @command{libtool}, verifying that installed files
+are correctly linked and executed, and demonstrating flexibility in handling
+different installation paths and adapting to changing directory structures.
+
+@item @file{tests/bug_42313.at}
+Tests that there are no conflicting warnings about AC_PROG_RANLIB by verifying
+no autoscan AC_PROG_RANLIB warning and checking that AC_PROG_RANLIB declaration
+has a warning.
+
+@item @file{tests/bug_62343.at}
+Tests that the @option{-no-canonical-prefixes} flag is not removed from the linking
+command, but it is instead passed through to the linker.
+
+@item @file{tests/bug_71489.at}
+Tests that the local version of an installed program is used both with and
+without an external library.
+
+@item @file{tests/cdemo.at}
+Tests include a demonstration of @command{libtool} convenience libraries, a
+mechanism that allows build-time static libraries to be created, in a way that
+their components can be later linked into programs or other libraries, even
+shared ones.
+
+@item @file{tests/cmdline_wrap.at}
+Tests include a verification that @command{libtool} operates properly when the
+maximum command line length is very small.
+
+@item @file{tests/configure-funcs.at}
+Tests creation of shell functions shared with @command{configure} and
+@command{libtool}.
+
+@item @file{tests/configure-iface.at}
+Tests that exercise the configure interface to @file{libltdl}.
+
+@item @file{tests/convenience.at}
+Tests demonstrate @command{libtool}'s convenience archive capabilities for C,
+C++, Fortran, and Java languages.
+
+@item @file{tests/ctor.at}
+Test that @command{libtool} can handle code with C++ constructors.
+
+@item @file{tests/cwrapper.at}
+Test cwrapper compliance with standards for uninstalled executables, string
+length, and installed shared libraries.
+
+@item @file{tests/darwin.at}
+Tests for macOS X including compilation, concurrent library extraction,
+@command{GDB} debug information, @command{ld} warnings, and verifying
+@file{.dylib} and @file{.so} files can be used with @code{lt_dlopen}.
+
+@item @file{tests/demo.at}
+Tests include a demonstration of a trivial package that uses @command{libtool}.
+The tests include scenarios to build both static and shared libraries, only
+static libraries, only shared libraries, disabling fast-install mode, building
+PIC code, and building non-PIC code.
+
+@item @file{tests/depdemo.at}
+Tests include a demonstration of inter-library dependencies with
+@command{libtool}.  The test programs link some interdependent libraries under
+different scenarios.
+
+@item @file{tests/deplib-in-subdir.at}
+Tests building and linking various libraries within various directories and
+sub-directories while changing directories as well.  It should be possible to
+use a nontrivial relative path to the output file name when creating libraries
+and programs.  The @code{deplibs} of these might have relative paths as well.
+When executing uninstalled programs, the paths relative to @file{$PWD} at build
+time needs to be translated to a path valid at execution time.  Also test
+installing these libraries and programs; however, use consistent relative paths
+between @command{libtool} @option{--mode=link} and @command{libtool}
+@option{--mode=install} in this test.
+
+@item @file{tests/deplibs-ident.at}
+Tests the correct detection and handling of identical dependency libraries when
+using @command{libtool}.
+
+@item @file{tests/deplibs-mingw.at}
+Tests include various scenarios related to detecting deplibs correctly,
+including cases where there is no @command{file} command installed as well
+as the host OS being MinGW.
+
+@item @file{tests/destdir.at}
+Installs some libs in @file{$DESTDIR}, moves them to a different dir, then
+installs some false libraries in @file{$DESTDIR} that should not be linked
+against.  If the program refers to these false libraries, there is a bug.
+
+@item @file{tests/dlloader-api.at}
+Tests that @code{lt_dlopen} can open a shared library and call a function from
+the library, verifies that @code{lt_dlsym} can find a symbol in the opened
+library, and make sure that @code{lt_dlclose} can properly close the library.
+
+@item @file{tests/dumpbin-symbols.at}
+Tests whether on Windows a convenience symbol in a section of a @file{.lib}
+file is present even if that section is hidden in the @file{.obj} file.
+
+@item @file{tests/duplicate_conv.at}
+Tests two convenience archives with the same name, and also containing an
+object with the same name.
+
+@item @file{tests/duplicate_deps.at}
+Tests circular call of dependencies between two libraries, @file{liba} and
+@file{libb}. Function @code{a1()} from @file{liba} calls @code{b1()} from
+@file{libb} and function @code{b1()} from @file{libb} calls @code{a2()} from
+@file{liba}.
+
+@item @file{tests/duplicate_members.at}
+Tests a library with multiple files of the same name (from different
+directories), such as @file{1/a.c}, @file{2/a.c}, @file{3/a.c}, etc.
+
+@item @file{tests/early-libtool.at}
+Tests building binaries using @command{libtool} using two configure approaches.
+
+@item @file{tests/exceptions.at}
+Tests C++ exception handling with @command{libtool}.
+
+@item @file{tests/execute-mode.at}
+Tests the @option{--mode=execute} feature of @command{libtool}.
+
+@item @file{tests/exeext.at}
+Tests ensure that @code{$EXEEXT} handling works by linking and installing an
+executable.
+
+@item @file{tests/export.at}
+Tests symbol exports if shared libraries are enabled.
+
+@item @file{tests/export-def.at}
+Test exporting from a DLL with module definition (@file{.def} files).
+This test only runs if shared libraries are enabled and building a DLL is
+supported.
+
+@item @file{tests/f77demo.at}
+Tests test Fortran 77 support in @command{libtool} by creating libraries from
+Fortran 77 sources, and mixed Fortran and C sources, and a Fortran 77 program
+to use the former library, and a C program to use the latter library.
+
+@item @file{tests/fail.at}
+Tests to ensure that @command{libtool} really fails when it should, including
+after compile failure, program creation failure, and shared library creation
+failure.
+
+@item @file{tests/fcdemo.at}
+Tests are similar to the @file{tests/f77demo.at} tests, except that Fortran 90
+is used in combination with the @samp{FC} interface provided by Autoconf and
+Automake.
+
+@item @file{tests/flags.at}
+Tests include checks that compile and linker flags get passed through
+@command{libtool}.  Tests flags for C, C++, Fortran 77, and Fortran 90.
+
+@item @file{tests/help.at}
+Tests a variety of mode commands, including mode short-hands, to ensure basic
+command line functionality. Also verify that the @option{--debug} flag is
+handled correctly in each mode.
+
+@item @file{tests/indirect_deps.at}
+Tests indirect dependencies (or nested dependencies). @file{libd} depends
+on @file{libconv}, which depends on @file{libb}, which depends on @file{liba}.
+
+@item @file{tests/infer-tag.at}
+Tests that @code{func_infer_tag} works by compiling various code snippets in
+various languages (C, C++, Fortran, Java) without a @option{--tag} flag.
+
+@item @file{tests/inherited_flags.at}
+Tests the functionality of the @code{inherited_linker_flags} variable in
+@command{libtool} library files.
+
+@item @file{tests/install.at}
+Tests install mode and ensures that @code{install_override_mode} overrides the
+mode of the shared library (and only the shared library).
+
+@item @file{tests/lalib-syntax.at}
+Tests parsing of @file{.la} files including both correctly formed @file{.la}
+files and malformed or bogus @file{.la} files.
+
+@item @file{tests/libtool.at}
+Tests basic @command{libtool} functionality including shell meta-character removal, lack
+of supplied mode option, file extension handling, simple linking,
+@option{objectlist} flag usage, and @code{LT_SUPPORTED_TAG} usage.
+
+@item @file{tests/libtoolize.at}
+Tests that errors and warnings are reported for invalid and unknown
+@code{LIBTOOLIZE_OPTIONS} as well as checking the @option{--no-warn} flag
+suppresses @command{libtoolize} warnings.
+
+@item @file{tests/link-order2.at}
+Tests to make sure that @code{depdepls} are added right after the libraries
+that pull them in which is necessary at least for static linking and on systems
+where libraries do not link against other libraries.
+
+@item @file{tests/link-order.at}
+Tests for problems with linking libraries in different order.
+
+@item @file{tests/loadlibrary.at}
+Tests @file{libltdl} (a @file{libdl} API for @code{dlopen}) support of
+@code{LoadLibrary} for dynamically linking DLLs in Windows environments.
+
+@item @file{tests/localization.at}
+Tests to verify that invoking C compiler language localization options do not
+cause problems with @command{libtool}.
+
+@item @file{tests/lt_dladvise.at}
+Tests @file{libltdl} (a @file{libdl} API for @code{dlopen}) module loading
+advisor functions.
+
+@item @file{tests/lt_dlexit.at}
+Tests @file{libltdl} (a @file{libdl} API for @code{dlopen}) for a memory use
+after free bug in @code{lt_dlexit}.
+
+@item @file{tests/lt_dlopen_a.at}
+Tests @code{lt_dlopen} with an archive file.  Verifies that @code{lt_dlopen}
+can load an archive file and successfully return a handle to it.
+
+@item @file{tests/lt_dlopen.at}
+Tests @file{libltdl} (a @file{libdl} API for @code{dlopen}) with a basic C
+example.
+
+@item @file{tests/lt_dlopenext.at}
+Tests @file{libltdl} (a @file{libdl} API for @code{dlopen}) with an extern C++
+function.
+
+@item @file{tests/ltdl-api.at}
+Tests that @command{libtool} doesn't mangle @file{gnulib} @code{argv} names.
+
+@item @file{tests/ltdl-libdir.at}
+Tests if @file{ltdl} can find an installed module using the @code{libdir}
+variable in the @file{.la} file.  Tests also include a MinGW test which uses a
+Windows-style @code{libdir} name.
+
+@item @file{tests/mdemo.at}
+Tests include a demonstration of a package that uses @command{libtool} and the
+system independent @code{dlopen} wrapper @file{libltdl} to load modules.  The
+library @file{libltdl} provides a @code{dlopen} wrapper for various platforms
+(POSIX) including support for @code{dlpreopened} modules
+(@pxref{Dlpreopening}).
+
+@item @file{tests/need_lib_prefix.at}
+Tests to check for failures on systems that require libraries to be prefixed
+with @file{lib}.
+
+@item @file{tests/nocase.at}
+Tests the @code{want_nocaseglob} configuration option to search for libraries
+regardless of case.
+
+@item @file{tests/no-executables.at}
+Tests @code{AC_NO_EXECUTABLES} macro with @command{gcc}.
+
+@item @file{tests/nonrecursive.at}
+Tests non-recursive DLL libraries with nonrecursive Automake @file{libltdl}
+(a @file{libdl} API for @code{dlopen}) build.
+
+@item @file{tests/old-m4-iface.at}
+Tests various aspects of @command{libtool}'s old @command{m4} interface.
+
+@item @file{tests/pic_flag.at}
+Tests the @option{-fpic} flag with @command{gcc} and @command{g++}.
+
+@item @file{tests/recursive.at}
+Tests recursive DLL libraries with recursive Automake @file{libltdl} (a
+@file{libdl} API for @code{dlopen}) build.
+
+@item @file{tests/resident.at}
+Tests that resident modules are not unloaded at program exit, as they need to
+be able to invoke @code{atexit} handlers.  A module being a resident module
+means it is prevented from being @code{lt_dlclosed}.
+
+@item @file{tests/runpath-in-lalib.at}
+Tests the runpath configuration options in @command{libtool} (@option{-R} and
+@option{-rpath}) and that the resulting @file{.la} files are installed in the
+directory appended to their respective library's @code{dependency_libs} by
+@option{-R}.
+
+@item @file{tests/search-path.at}
+Tests @code{sys_lib_search_path_spec}, which is an expression to get the
+compile-time system library search path.  Tests include determining if it is
+possible to link an executable to system libraries and if
+@code{sys_lib_search_path_spec} also works on MSVC (Microsoft Visual C++).
+
+@item @file{tests/shlibpath.at}
+Tests include verifying proper behaviour of the @code{shlibpath_var}, which is
+the variable responsible for telling the linker where to find shared libraries.
+Additionally, this tests the behaviour of the @code{shlibpath_overrides_runpath}
+variable, which determines if it possible to override an executable's
+hardcoded library search path with an environment variable.
+
+@item @file{tests/slist.at}
+Tests the functionality of the SList datastructure, which is an implementation
+of singly linked lists.  Tests include verifying the usual linked list
+functions such as finding, removing, deleting, reversing, and sorting the
+element(s) in SLists.
+
+@item @file{tests/standalone.at}
+Tests @file{libltdl} functionality as a standalone tool.  Tests include
+compiling a symlinked version of @file{libltdl} and a copied version of
+@file{libltdl}.  Next @file{libltdl} is installed locally and linked in a
+project without the use of Autoconf or Automake.
+
+@item @file{tests/static.at}
+Tests various flags related to static and dynamic linking including
+@option{-Bstatic} and @option{-Bdynamic}.
+
+@item @file{tests/stresstest.at}
+Tests various @command{libtool} flag and option combinations, tests linking
+various types of objects in different sections, and tests regular expressions
+to cover edge cases and unusual configurations over multiple iterations.
+
+@item @file{tests/subproject.at}
+Tests the @file{libltdl} flag for building subprojects in individual
+directories.  Tests cover soft-linked libltdl trees, copied @file{libltdl}
+trees, and linking @file{libltdl} without Autotools.
+
+@item @file{tests/sysroot.at}
+Tests that @command{libtool} runs properly in sandboxed @file{sysroot}
+directories.
+
+@item @file{tests/tagdemo.at}
+Tests include a demonstration of a package that uses @command{libtool}'s
+multi-language support through configuration tags.  It generates a library from
+C++ sources, which is then linked to a C++ program.
+
+@item @file{tests/template.at}
+Tests that @command{libtool} can handle C++ code utilizing templates.
+
+@item @file{tests/testsuite.at}
+Main testsuite framework file processed by @command{autom4te} processes enable
+running the @command{libtool} test cases.
+
+@item @file{tests/versioning.at}
+Tests @command{libtool}'s versioning system.  Tests begin with verifying the
+behaviour of @command{libtool} versioning flags @option{-version-info} and
+@option{-version-number}.  Next, this tests installing a library, then updating
+the library with a new revision, a compatible update, and an incompatible
+update.  In each case, the tests verify that the original library will link and
+install as expected.
+
+@item @file{tests/with_pic.at}
+Tests the function of the @option{--enable-pic} flag.  The @option{--enable-pic}
+flag is used to specify whether or not @command{libtool} uses PIC objects.
+This includes tests for setting @option{--enable-pic} to no, yes, or a comma
+delimited list of package names.
+
+@end table
 
 @node When tests fail
 @subsection When tests fail
 @cindex failed tests
 @cindex tests, failed
 
-When the tests in the old test suite are run via @command{make check},
-output is caught in per-test @file{tests/@var{test-name}.log} files
-and summarized in the @file{test-suite.log} file.  The exit status of each
-program tells the @file{Makefile} whether or not the test succeeded.
+The Autotest-based test suite produces as output a file
+@file{tests/testsuite.log} that contains information about failed tests.
 
-If a test fails, it means that there is either a programming error in
-libtool, or in the test program itself.
-
-To investigate a particular test, you may run it directly, as you would
-a normal program.  When the test is invoked in this way, it produces
-output that may be useful in determining what the problem is.
-
-The new, Autotest-based test suite produces as output a file
-@file{tests/testsuite.log} that contains information about failed
-tests.
-
-You can pass options to the test suite through the @command{make}
-variable @env{TESTSUITEFLAGS} (@pxref{testsuite Invocation, ,
-The Autoconf Manual, autoconf, The Autoconf Manual}).
-
+You can pass options to the test suite through the @command{make} variable
+@env{TESTSUITEFLAGS} (@pxref{testsuite Invocation, , Making testsuite Scripts,
+autoconf, The Autoconf Manual}).
 
 @node Reporting bugs
 @section Reporting bugs
@@ -5805,13 +5860,6 @@ for a match against the extended regular expression @var{regex}.  When
 argument to @samp{$file_magic_cmd} to verify whether the
 regular expression matches its output, and warn the user otherwise.
 
-@item test_compile
-@vindex test_compile
-just checks whether it is possible to link a program out of a list of
-libraries, and checks which of those are listed in the output of
-@code{ldd}.  It is currently unused, and will probably be dropped in the
-future.
-
 @item pass_all
 @vindex pass_all
 will pass everything without any checking.  This may work on platforms
@@ -5877,7 +5925,6 @@ themselves, you should have a better sense of how to improve libtool, or
 write your own.
 
 @menu
-* References::                  Finding more information.
 * Compilers::                   Creating object files from source files.
 * Reloadable objects::          Binding object files together.
 * Multiple dependencies::       Removing duplicate dependent libraries.
@@ -5886,36 +5933,6 @@ write your own.
 * File name conversion::        Converting file names between platforms.
 * Windows DLLs::                Windows header defines.
 @end menu
-
-@node References
-@subsection References
-
-The following is a list of valuable documentation references:
-
-@itemize @bullet
-@item
-SGI's IRIX Manual Pages can be found at@*
-@url{http://techpubs.sgi.com/cgi-bin/infosrch.cgi?cmd=browse&db=man}.
-
-@item
-Sun's free service area
-(@url{http://www.sun.com/service/online/free.html}) and documentation
-server (@url{http://docs.sun.com/}).
-
-@item
-Compaq's Tru64 UNIX online documentation is at@*
-(@url{http://tru64unix.compaq.com/faqs/publications/pub_page/doc_list.html})
-with C++ documentation at@*
-(@url{http://tru64unix.compaq.com/cplus/docs/index.htm}).
-
-@item
-Hewlett-Packard has online documentation at
-(@url{http://docs.hp.com/index.html}).
-
-@item
-IBM has online documentation at
-(@url{http://www.rs6000.ibm.com/resource/aix_resource/Pubs/}).
-@end itemize
 
 @node Compilers
 @subsection Compilers
@@ -6001,7 +6018,7 @@ in cases where it is necessary.
 @subsection Archivers
 
 On all known systems, building a static library can be accomplished by
-running @kbd{ar cru lib@var{name}.a @var{obj1}.o @var{obj2}.o @dots{}},
+running @kbd{ar cr lib@var{name}.a @var{obj1}.o @var{obj2}.o @dots{}},
 where the @file{.a} file is the output library, and each @file{.o} file is an
 object file.
 
@@ -6129,7 +6146,7 @@ cross-compiling, and affects only the ability to launch host platform
 executables on the build platform using an emulation or API-enhancement
 environment such as Wine.  Failure to convert paths
 (@pxref{File Name Conversion Failure}) will cause a warning to be issued, but
-rarely causes the build to fail---and should have no affect on the compiled
+rarely causes the build to fail---and should have no effect on the compiled
 products, once installed properly on the host platform.  For more information,
 @pxref{Cross compiling}.
 
@@ -6626,8 +6643,8 @@ It should be noted that there are various projects that attempt to relax
 these requirements by various low level tricks, but they are not
 discussed here.
 Examples are
-@uref{http://alain.frisch.fr/@/flexdll.html, FlexDLL} and
-@uref{http://edll.sourceforge.net/, edll}.
+@uref{https://github.com/ocaml/flexdll, FlexDLL} and
+@uref{https://edll.sourceforge.net/, edll}.
 
 
 @node libtool script contents
@@ -6862,7 +6879,8 @@ shell does not support the shell option @code{nocaseglob}, making
 
 @defvar finish_cmds
 Commands to tell the dynamic linker how to find shared libraries in a
-specific directory.
+specific directory. These commands can be disabled during testing local
+changes to shared libraries with @option{--no-finish}.
 @end defvar
 
 @defvar finish_eval
