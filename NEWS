@@ -1,5 +1,282 @@
 NEWS - list of user-visible changes between releases of GNU Libtool
 
+* Noteworthy changes in release 2.5.4 (2024-11-20) [stable]
+
+** New features:
+
+  - New libtool command line flag, --no-finish, to skip executing
+    finish_cmds that would alter the shared library cache during testing.
+
+  - New libtool command line flag, --reorder-cache=DIRS, to reorder the
+    shared library cache, only on OpenBSD.
+
+** Bug fixes:
+
+  - Fix incorrect use of workarounds designed for Darwin versions that
+    don't have -single_module support.
+
+  - Fix errors when executing 'make distclean' and 'make maintainer-clean'.
+
+  - Fix bug where the constructed rpath omit directories, instead of
+    appending them to the end.
+
+  - Fix configure error for when variable 'multlib' is unset.
+
+  - Fix searching for -L in link paths being over-greedy and incorrectly
+    handling paths with -L in them.
+
+  - Avoid using AC_TRY_EVAL macro, "dangerous and undocumented".
+
+  - Fix linking libraries at runtime with tcc by adding run path.
+
+  - Fix path comparison by removing trailing slashes on install commands.
+
+  - Fix linking for mingw with lld by prefering response files over the
+    linker script.
+
+  - Fix '-Fe' usage with linking in MSVC.
+
+  - Fix '--no-warnings' flag.
+
+  - Fix handling xlc(1)-specific options.
+
+  - Fix Haiku support.
+
+** Changes in supported systems or compilers:
+
+  - Support additional flang-based compilers, 'f18' and 'f95'.
+
+  - Support for 'netbsdelf*-gnu'.
+
+  - Support for '*-mlibc', and subsequently Ironclad and Managarm.
+
+  - Support for SerenityOS.
+
+  - Support for wasm32-emscripten.
+
+* Noteworthy changes in release 2.5.3 (2024-09-25) [stable]
+
+** New features:
+
+  - Add 'aarch64' support to the file magic test, which allows for
+    shared libraries to be built with Mingw for aarch64.
+
+** Bug fixes:
+
+  - The configure options --with-pic and --without-pic have been renamed
+    to --enable-pic and --disable-pic, respectively.  The old names
+    --with-pic and --without-pic are still supported, though, for
+    backward compatibility.
+
+  - The configure option --with-aix-soname has been renamed to
+    --enable-aix-soname.  The old name --with-aix-soname is still
+    supported, though, for backward compatibility.
+
+  - Fix conflicting warnings about AC_PROG_RANLIB.
+
+  - Document situations where -export-symbols does not work.
+
+  - Update FSF office address with URL in each file's license block.
+
+  - Add checks for aclocal in standalone.at and subproject.at test files
+    that report failures in Linux From Scratch and Darwin builds.
+
+
+* Noteworthy changes in release 2.5.2 (2024-08-29) [beta]
+
+** Bug fixes:
+
+  - Use shared objects built in source tree instead of the installed
+    versions for more reliable testing.
+
+  - Fix test in bug_62343.at for confirmed Cygwin/Mingw32 where the
+    incorrect architecture version of a compiler was generating
+    object files that could not be linked with a library file.
+
+  - Fix typos found with codespell.
+
+** Changes in supported systems or compilers:
+
+  - Add support for 32-bit mode on FreeBSD/powerpc64.
+
+
+* Noteworthy changes in release 2.5.1 (2024-07-25) [beta]
+
+** New features:
+
+  - Support C++17 compilers in the C++ tests.
+
+  - Add sysroot to library path for cross builds.
+
+** Important incompatible changes:
+
+  - Autoconf 2.64 is required for libtool.m4 to use AS_VAR_APPEND.
+
+** Bug fixes:
+
+  - Fix for uninitialized variable in libtoolize.
+
+  - Skip Fortran/C demo tests when using Clang with fsanitize to
+    avoid an incompatible ASan runtime.
+
+  - Updated documentation for testing.
+
+  - Fix failing test to account for program-prefix usage.
+
+  - Replaced a deprecated macro to remove warning messages in the
+    testsuite logs.
+
+  - Fix number of arguments for AC_CHECK_PROG call.
+
+  - Fix test failures with no-canonical-prefixes flag by checking
+    if the flag is supported first.
+
+  - Fix test failures with no-undefined flag by checking host OS
+    before appending the flag.
+
+  - Skip test when passing CXX flags through libtool to avoid test
+    failure on NetBSD.
+
+  - Remove texinfo warning for period in node name of pxref.
+
+  - Alter syntax in sed command to fix numerous test failures
+    on 64-bit windows/cygwin/mingw.
+
+  - Fix 'Wstrict-prototypes' warnings.
+
+  - Correct DLL Installation Path for mingw multilib builds.
+
+  - Fix '--preserve-dup-deps' stripping duplicates.
+
+  - Disable chained fixups for macOS, since it is not compatible with
+    '-undefined dynamic_lookup'.
+
+** Changes in supported systems or compilers:
+
+  - Support additional flang-based compilers, 'flang-new' and 'ftn'.
+
+
+* Noteworthy changes in release 2.5.0 (2024-05-13) [alpha]
+
+** New features:
+
+  - Pass '-fdiagnostics-color', '-frecord-gcc-switches',
+    '-fno-sanitize*', '-Werror', and 'prefix-map' flags.
+
+  - Pass the '-no-canonical-prefixes' linker flag.
+
+  - Pass '-fopenmp=*' for Clang to allow choosing between libgomp and
+    libomp.
+
+  - Pass '-shared-libsan', '-static-libsan', 'rtlib=*', and
+    'unwindlib=*' for Clang.
+
+  - Expanded process.h inclusion on Windows for more than the
+    proprietary MSVC compiler. Other alternative Windows compilers
+    also require process.h.
+
+  - Pass 'elf32_x86_64' and 'elf64_x86_64' to the linker on hurd-amd64.
+
+  - Recognize *-*-windows* config triplets.
+
+** Important incompatible changes:
+
+  - Removed test_compile from command line options.
+
+  - By default executables are created with the RUNPATH property for
+    the Android linker. RUNPATH works for libraries which are not
+    installed in system locations.
+
+  - Removed AC_PROG_SED fallback, as the macro has been supported
+    in Autoconf since the 90's.
+
+** Bug fixes:
+
+  - Check for space after -l, -L, and -R linker flags.
+
+  - Updated documentation for tests, the demo directory, and
+    elsewhere.
+
+  - Fixed Solaris 11 builds.
+
+  - Clean trailing "/" from sysroot path.
+
+  - Fixed shared library builds for System V.
+
+  - Added mingw to the list of systems not requiring libm.
+
+  - Fixed support for nios2 systems.
+
+  - Fixed linker check for '--whole-archive' support for linkers other
+    than ld.
+
+  - Use -Fe instead of -o with MSVC to avoid deprecation warnings.
+
+  - Improved reproducibility of libtool scripts.
+
+  - Avoided MinGW warning by adding CRTIMP.
+
+  - Improved grep portability.
+
+  - Fixed cross-building warnings when checking for file.
+
+** Changes in supported systems or compilers:
+
+  - Removed support for bitrig (*-*-bitrig*).
+
+  - Added support for flang (Fortran LLVM-based) compilers.
+
+
+* Noteworthy changes in release 2.4.7 (2022-03-16) [stable]
+
+** New features:
+
+  - Libtool script now supports (configure-time and runtime) ARFLAGS
+    variable, which obsoletes AR_FLAGS.  This is due to naming conventions
+    among other *FLAGS and to be consistent with Automake's ARFLAGS.
+
+  - Gnulib testsuite is enabled and run during 'make check'.
+
+  - Support the Windows version of the Intel C Compiler (icl) in
+    libtool script.
+
+  - Pass '-fsanitize=*' flags for GCC and LLVM, and '-specs=*' for GCC
+    to linker.
+
+  - Pass '-Xassembler=*' and '-Wa,*' flag to compilers and linkers.
+
+  - The variable 'FILECMD' with default value of '/usr/bin/file' was used to
+    replace existing hard coded references to '/usr/bin/file'.
+
+  - Add MidnightBSD support.
+
+** Important incompatible changes:
+
+  - Libtool changed ARFLAGS/AR_FLAGS default from 'cru' to 'cr'.
+
+  - Do not pass '-pthread' to Solaris linker.
+
+  - 'libtool' and 'libtoolize' scripts now use '#! /usr/bin/env sh' shebang.
+    Previously '#! /bin/sh' was used, which presents challenges for
+    containerized environments.
+
+** Bug fixes:
+
+  - Fix significant slowdown of libtoolize for certain projects (regression
+    introduced in 2.4.3 release) caused by infinite m4 macro recursion.
+
+  - Mitigate the slowdown of libtool script (introduced in v2.4.3) caused by
+    increased number of calls to '$SED $sed_quote_subst' (bug#20006).
+
+  - Properly parse and export TLS symbols on AIX.
+
+  - Various bug fixes surrounding use of 'sed'.
+
+  - Darwin systems set proper "allow undefined" flag on OSX 11, and
+    PowerPC 10.5.
+
+  - Removed some deprecated tests related to 'Makefile.inc' files.
+
 * Noteworthy changes in release 2.4.6 (2015-02-15) [stable]
 
 ** New features:
@@ -683,7 +960,7 @@ New in 1.9b: 2004-08-29; CVS version 1.5a, Libtool team:
   libraries from dlpreopened modules.
 * libtoolize installs libtool.m4, (ltdl.m4 if used,) and various supporting
   m4 definitions to AC_CONFIG_MACRO_DIR.
-* Mode inferrence removed, shorthand for choosing modes added.
+* Mode inference removed, shorthand for choosing modes added.
 * Specifying -allow-undefined is now an error.
 * Speed up max_cmd_len check.
 * libltdl can now preopen modules from within a library, and libtool will
@@ -693,7 +970,7 @@ New in 1.9b: 2004-08-29; CVS version 1.5a, Libtool team:
   by module name.
 * New function in libltdl: lt_dlpreload_open opens all preloaded modules.
 * libltdl no longer loads shared libraries with global symbol resolution,
-  this caused problems when the symbols were intended to be overriden further
+  this caused problems when the symbols were intended to be overridden further
   up the stack; it is also not recommended practice.
 * New function in libltdl: lt_dlhandle_first, primes handle iterations (using
   lt_dlhandle_next) to filter by module interface.
@@ -1013,7 +1290,7 @@ New in 1.2d: 1998-12-16; CVS version 1.2c, Libtool team:
 * We now have anonymous CVS access to GNU libtool.  CVSROOT is
   :pserver:anoncvs@anoncvs.gnu.org:/gd/gnu/anoncvsroot.  The password
   is empty.  The directory is libtool.  Check our home-page at
-  http://www.gnu.org/software/libtool/libtool.html for details.
+  https://www.gnu.org/software/libtool/libtool.html for details.
 * Alexandre Oliva, Thomas Tanner and Gary V. Vaughan have taken over
   the maintenance of libtool.
 * Arguments to ltconfig have been changed to allow creation of a
@@ -1190,9 +1467,10 @@ New in 0.1:
 * First release of libtool
 * Support for: *-*-freebsd*, *-*-netbsd*, *-*-sunos4*, *-*-ultrix4*
 -- 
-  Copyright (C) 1996, 1998-2015 Free Software Foundation, Inc.
 
-  This file is part of GNU Libtool.
+Copyright (C) 1996, 1998-2019, 2021-2024 Free Software Foundation, Inc.
+
+This file is part of GNU Libtool.
 
 Copying and distribution of this file, with or without modification,
 are permitted in any medium without royalty provided the copyright

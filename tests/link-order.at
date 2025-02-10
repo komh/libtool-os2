@@ -1,7 +1,7 @@
 # link-order.at -- ensure that library linking order matches  -*- Autotest -*-
 #
-#   Copyright (C) 2005, 2007-2008, 2011-2015 Free Software Foundation,
-#   Inc.
+#   Copyright (C) 2005, 2007-2008, 2011-2019, 2021-2024 Free Software
+#   Foundation, Inc.
 #   Written by Alexandre Oliva & Ralf Wildenhues, 2005
 #
 #   This file is part of GNU Libtool.
@@ -17,10 +17,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GNU Libtool; see the file COPYING.  If not, a copy
-# can be downloaded from  http://www.gnu.org/licenses/gpl.html,
-# or obtained by writing to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GNU Libtool.  If not, see <https://www.gnu.org/licenses/>.
 ####
 
 
@@ -50,7 +47,7 @@ for i in old new; do
 
   cat >src/a_$i.c <<EOF
 /* w32 fun, MSVC needs to dllimport when using a shared library, so use
- * DLL_EXPORT to discriminate as that happens to coinside in this case.
+ * DLL_EXPORT to discriminate as that happens to coincide in this case.
  * gnu has auto import.
  */
 #if defined _MSC_VER && defined DLL_EXPORT
@@ -65,7 +62,7 @@ EOF
 
   cat >src/b_$i.c <<EOF
 /* w32 fun, MSVC needs to dllimport when using a shared library, so use
- * DLL_EXPORT to discriminate as that happens to coinside in this case.
+ * DLL_EXPORT to discriminate as that happens to coincide in this case.
  * gnu has auto import.
  */
 #if defined _MSC_VER && defined DLL_EXPORT
@@ -99,12 +96,12 @@ aix* | interix*) ;;  # These systems have different path syntax
   case $hardcode_direct$hardcode_direct_absolute in
   yesno)
     AT_CHECK([if $EGREP relinking stderr; then
-         $EGREP " .*\/new\/lib/libb$shared_ext .*\/old\/lib/libcee$shared_ext" stdout
+         $EGREP " .*/new/lib/libb$shared_ext .*/old/lib/libcee$shared_ext" stdout
        else :; fi], [0], [ignore], [], [echo "wrong link order"])
     ;;
   *)
     AT_CHECK([if $EGREP relinking stderr; then
-         $EGREP " -L.*\/new\/lib -lb -L.*\/old\/lib -lcee" stdout
+         $EGREP " -L.*/new/lib -lb -L.*/old/lib -lcee" stdout
        else :; fi], [0], [ignore], [], [echo "wrong link order"])
     ;;
   esac

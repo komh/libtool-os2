@@ -1,7 +1,7 @@
 # fcdemo.at -- Fortran 90/95 language support.		-*- Autotest -*-
 #
-#   Copyright (C) 2003, 2005-2006, 2011-2015 Free Software Foundation,
-#   Inc.
+#   Copyright (C) 2003, 2005-2006, 2011-2019, 2021-2024 Free Software
+#   Foundation, Inc.
 #   Written by Eric Lindahl, 2002
 #   Written by Gary V. Vaughan, 2003
 #
@@ -18,10 +18,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GNU Libtool; see the file COPYING.  If not, a copy
-# can be downloaded from  http://www.gnu.org/licenses/gpl.html,
-# or obtained by writing to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GNU Libtool.  If not, see <https://www.gnu.org/licenses/>.
 ####
 
 
@@ -309,6 +306,14 @@ AT_CHECK([$GREP 'Welcome to GNU libtool mixed C/Fortran demo!' stdout],
 
 AT_SETUP([static library])
 
+# Using clang with fsanitize results in an incompatible ASan runtime.
+# It results in the warning message "linked against incompatible ASan
+# runtimes". This only occurs with the mixed Fortran/C demo.
+if $LIBTOOL --config | $EGREP '^CC="clang';
+then
+  AT_CHECK([echo "$LDFLAGS" | $EGREP 'fsanitize=' && (exit 77)], 1)
+fi
+
 # Executing the static fprogram might be interactive on MSYS.
 AT_KEYWORDS([interactive])
 
@@ -327,6 +332,14 @@ AT_CLEANUP
 
 AT_SETUP([shared library])
 
+# Using clang with fsanitize results in an incompatible ASan runtime.
+# It results in the warning message "linked against incompatible ASan
+# runtimes". This only occurs with the mixed Fortran/C demo.
+if $LIBTOOL --config | $EGREP '^CC="clang';
+then
+  AT_CHECK([echo "$LDFLAGS" | $EGREP 'fsanitize=' && (exit 77)], 1)
+fi
+
 _LT_SETUP
 
 LT_AT_CHECK_CONFIG([--disable-static],
@@ -341,6 +354,14 @@ AT_CLEANUP
 ## ------------ ##
 
 AT_SETUP([shared and static together])
+
+# Using clang with fsanitize results in an incompatible ASan runtime.
+# It results in the warning message "linked against incompatible ASan
+# runtimes". This only occurs with the mixed Fortran/C demo.
+if $LIBTOOL --config | $EGREP '^CC="clang';
+then
+  AT_CHECK([echo "$LDFLAGS" | $EGREP 'fsanitize=' && (exit 77)], 1)
+fi
 
 _LT_SETUP
 

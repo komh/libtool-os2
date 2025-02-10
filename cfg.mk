@@ -1,6 +1,6 @@
 # cfg.mk -- Configuration for maintainer-makefile
 #
-#   Copyright (c) 2011-2015 Free Software Foundation, Inc.
+#   Copyright (c) 2011-2019, 2021-2024 Free Software Foundation, Inc.
 #   Written by Gary V. Vaughan, 2011
 #
 #   This file is part of GNU Libtool.
@@ -16,15 +16,20 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GNU Libtool; see the file COPYING.  If not, a copy
-# can be downlodad from http://www.gnu.org/licenses/gpl.html,
-# or obtained by writing to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Boston, # MA 02111-1301, USA.
+# along with GNU Libtool.  If not, see <https://www.gnu.org/licenses/>.
 
 update-copyright-env := UPDATE_COPYRIGHT_FORCE=1 UPDATE_COPYRIGHT_USE_INTERVALS=1
 
-# Set format of NEWS
-old_NEWS_hash := 558e27e5f41f842ed035bd42ed52706d
+update-copyright: update-release-year
+update-release-year:
+	$(AM_V_GEN)year=`date +%Y`; \
+	sed -i \
+		-e "/_LT_COPY/,+1 { /Copyright/ {s:[0-9][0-9][0-9][0-9]:$$year:} }" \
+		-e "/^Copyright/ {s:[0-9][0-9][0-9][0-9]:$$year:} " \
+		m4/libtool.m4
+
+# Set format of NEWS.
+old_NEWS_hash := 61ef5bb8af40dc806027f40d99f8c980
 
 manual_title = Portable Dynamic Shared Object Management
 
@@ -36,8 +41,8 @@ else
 announcement_Cc_ = autotools-announce@gnu.org, $(PACKAGE_BUGREPORT)
 endif
 
-# Don't syntax check the mail subdirectory.
-VC_LIST_ALWAYS_EXCLUDE_REGEX = ^mail/
+# Don't syntax check the mail subdirectory or patches to gnulib itself.
+VC_LIST_ALWAYS_EXCLUDE_REGEX = ^(mail|gl)/
 
 local-checks-to-fix =				\
 	sc_require_config_h			\
@@ -47,6 +52,7 @@ local-checks-to-skip =				\
 	$(local-checks-to-fix)			\
 	sc_GPL_version				\
 	sc_cast_of_x_alloc_return_value		\
+	sc_indent				\
 	sc_prohibit_always-defined_macros	\
 	sc_prohibit_always_true_header_tests	\
 	sc_prohibit_strncpy			\
@@ -70,9 +76,9 @@ local-checks-to-skip =				\
 
 # Check for correct usage of $cc_basename in libtool.m4.
 sc_libtool_m4_cc_basename:
-	@sed -n '/case \$$cc_basename in/,/esac/ {			\
+	@$(SED) -n "/case \\\$$cc_basename in/,/esac/ {			\
 	  /^[	 ]*[a-zA-Z][a-zA-Z0-9+]*[^*][	 ]*)/p;			\
-	}' '$(srcdir)/$(macro_dir)/libtool.m4' | grep . && {		\
+	}" '$(srcdir)/$(macro_dir)/libtool.m4' | grep . && {		\
 	  msg="\$$cc_basename matches should include a trailing '*'."	\
 	  $(_sc_say_and_exit) } || :
 
@@ -112,6 +118,13 @@ sc_prohibit_bracket_as_test:
 	halt="use 'if test' instead of 'if ['"			\
 	  $(_sc_search_regexp)
 
+# : ${foo=`bar`} is not perfectly portable (see Shellology in autoconf's manual)
+exclude_file_name_regexp--sc_prohibit_command_in_subst = ^cfg.mk$$
+sc_prohibit_command_in_subst:
+	@prohibit='\$$\{[^`}]*`[^`]*`[^}]*}'				\
+	halt='do not use `command` in $${ } substitution`'		\
+	  $(_sc_search_regexp)
+
 # Check for quotes within backquotes within quotes "`"bar"`"
 exclude_file_name_regexp--sc_prohibit_nested_quotes = ^cfg.mk$$
 sc_prohibit_nested_quotes:
@@ -135,12 +148,12 @@ sc_prohibit_set_dummy_without_shift:
 	@files=$$($(VC_LIST_EXCEPT));					\
 	if test -n "$$files"; then					\
 	  grep -nE '(set dummy|shift)' $$files |			\
-	    sed -n '/set[	 ][	 ]*dummy/{			\
+	    $(SED) -n "/set[	 ][	 ]*dummy/{			\
 	      /set.*dummy.*;.*shift/d;					\
 	      N;							\
 	      /\n.*shift/D;						\
 	      p;							\
-            }' | grep -n . && {						\
+	    }" | grep -n . && {						\
 	    msg="use 'shift' after 'set dummy'"				\
 	    $(_sc_say_and_exit) } || :;					\
 	else :;								\
@@ -176,7 +189,8 @@ sc_prohibit_test_binary_operators:
 exclude_file_name_regexp--sc_prohibit_test_dollar = ^cfg.mk$$
 sc_prohibit_test_dollar:
 	@prohibit='test[	 ]+(![	 ])?(-.[	 ]+)?X?\$$[^?#]' \
-	halt='use '\''test "$$..."'\'' instead of '\''test $$'\'		\
+	exclude='test \$${[A-Za-z_][A-Za-z0-9_]+\+y}'			\
+	halt='use '\''test "$$..."'\'' instead of '\''test $$'\'	\
 	  $(_sc_search_regexp)
 
 # Never use test -e.
@@ -208,11 +222,11 @@ sc_prohibit_test_const_follows_var:
 exclude_file_name_regexp--sc_require_function_nl_brace = (^HACKING|\.[ch]|\.texi)$$
 sc_require_function_nl_brace:
 	@for file in $$($(VC_LIST_EXCEPT)); do				\
-	  sed -n '/^func_[^	 ]*[	 ]*(/{				\
+	  $(SED) -n "/^func_[^	 ]*[	 ]*(/{				\
 	    N;								\
 	    /^func_[^	 ]* ()\n{$$/d;					\
 	    p;								\
-	  }' $$file | grep -E . && {					\
+	  }" $$file | grep -E . && {					\
 	    msg="found malformed function_definition in $$file"		\
 	    $(_sc_say_and_exit) } || :;					\
 	done
@@ -237,7 +251,8 @@ define _sc_search_regexp_or_exclude
   fi || :;
 endef
 
-exclude_file_name_regexp--sc_useless_braces_in_variable_derefs = /cvsu$$
+exclude_file_name_regexp--sc_useless_braces_in_variable_derefs = \
+	test-funclib-quote.sh$$
 sc_useless_braces_in_variable_derefs:
 	@prohibit='\$${[0-9A-Za-z_]+}[^0-9A-Za-z_]'			\
 	halt='found spurious braces around variable dereference'	\
@@ -257,11 +272,9 @@ sc_useless_quotes_in_case:
 	  $(_sc_search_regexp)
 
 # List syntax-check exempted files.
-exclude_file_name_regexp--sc_error_message_uppercase = \
-  ^$(_build-aux)/cvsu$$
 exclude_file_name_regexp--sc_prohibit_strcmp = \
   ^doc/libtool.texi$$
 exclude_file_name_regexp--sc_prohibit_test_minus_ao = \
   ^m4/libtool.m4$$
-exclude_file_name_regexp--sc_space_tab = \.diff$$
+exclude_file_name_regexp--sc_space_tab = (\.diff|test-funclib-quote.sh)$$
 exclude_file_name_regexp--sc_trailing_blank-non-rfc3676 = \.diff$$

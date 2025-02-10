@@ -1,6 +1,6 @@
-# with-pic.at -- test the --with-pic flag -*- Autotest -*-
+# with-pic.at -- test the --enable-pic flag -*- Autotest -*-
 
-#   Copyright (C) 2010-2015 Free Software Foundation, Inc.
+#   Copyright (C) 2010-2019, 2021-2024 Free Software Foundation, Inc.
 #
 #   This file is part of GNU Libtool.
 #
@@ -15,13 +15,10 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GNU Libtool; see the file COPYING.  If not, a copy
-# can be downloaded from  http://www.gnu.org/licenses/gpl.html,
-# or obtained by writing to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GNU Libtool.  If not, see <https://www.gnu.org/licenses/>.
 ####
 
-AT_SETUP([test --with-pic])
+AT_SETUP([test --enable-pic])
 
 # Set up a tests/demo.at style project.
 _LT_DEMO_SETUP
@@ -41,22 +38,22 @@ AT_CHECK([test . != "$at_srcdir" || exit 77])
 
 : ${MAKE=make}
 
-LT_AT_CONFIGURE([--disable-shared --with-pic=no])
+LT_AT_CONFIGURE([--disable-shared --enable-pic=no])
 AT_CHECK([$MAKE], [], [stdout], [ignore])
 AT_CHECK([$FGREP -v "$pic_flag" stdout], [], [ignore], [ignore])
 $MAKE clean
 
-LT_AT_CONFIGURE([--disable-shared --with-pic=yes])
+LT_AT_CONFIGURE([--disable-shared --enable-pic=yes])
 AT_CHECK([$MAKE], [], [stdout], [ignore])
 AT_CHECK([$FGREP "$pic_flag" stdout], [], [ignore], [ignore])
 $MAKE clean
 
-LT_AT_CONFIGURE([--disable-shared --with-pic="demo,foo,bar"])
+LT_AT_CONFIGURE([--disable-shared --enable-pic="demo,foo,bar"])
 AT_CHECK([$MAKE], [], [stdout], [ignore])
 AT_CHECK([$FGREP "$pic_flag" stdout], [], [ignore], [ignore])
 $MAKE clean
 
-LT_AT_CONFIGURE([--disable-shared --with-pic="foo,bar"])
+LT_AT_CONFIGURE([--disable-shared --enable-pic="foo,bar"])
 AT_CHECK([$MAKE], [], [stdout], [ignore])
 AT_CHECK([$FGREP -v "$pic_flag" stdout], [], [ignore], [ignore])
 $MAKE clean

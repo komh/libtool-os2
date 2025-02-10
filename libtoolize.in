@@ -1,9 +1,9 @@
-#! /bin/sh
+#! /usr/bin/env sh
 
 # Prepare a package to use libtool.
 # Written by Gary V. Vaughan <gary@gnu.org>, 2003
 
-# Copyright (C) 2003-2015 Free Software Foundation, Inc.
+# Copyright (C) 2003-2019, 2021-2024 Free Software Foundation, Inc.
 # This is free software; see the source for copying conditions.  There is NO
 # warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
@@ -63,6 +63,27 @@
 # Set a version string.
 scriptversion='(GNU @PACKAGE@) @VERSION@'
 
+# func_version
+# ------------
+# Echo version message to standard output and exit.
+func_version ()
+{
+    $debug_cmd
+
+	year=`date +%Y`
+
+	cat <<EOF
+$progname $scriptversion
+Copyright (C) $year Free Software Foundation, Inc.
+License GPLv2+: GNU GPL version 2 or later <https://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Written by Gary V. Vaughan <gary@gnu.org>, 2003
+EOF
+
+    exit $?
+}
 
 ## ---------------- ##
 ## Options parsing. ##
@@ -94,7 +115,12 @@ usage_message="Options:
 "
 
 # Additional text appended to 'usage_message' in response to '--help'.
-long_help_message=$long_help_message"
+func_help ()
+{
+    $debug_cmd
+
+    func_usage_message
+    $ECHO "$long_help_message
        'environment'   show warnings about LIBTOOLIZE_OPTIONS content
        'file'          show warnings about file copying and linking
 
@@ -114,14 +140,15 @@ When reporting a bug, please describe a test case to reproduce it and
 include the following information:
 
        host-triplet:   @host_triplet@
-       version:        $progname (GNU @PACKAGE@) @VERSION@
+       version:        $progname $scriptversion
        automake:       `($AUTOMAKE --version) 2>/dev/null |$SED 1q`
        autoconf:       `($AUTOCONF --version) 2>/dev/null |$SED 1q`
 
 Report bugs to <@PACKAGE_BUGREPORT@>.
 GNU @PACKAGE@ home page: <@PACKAGE_URL@>.
-General help using GNU software: <http://www.gnu.org/gethelp/>.
-"
+General help using GNU software: <https://www.gnu.org/gethelp/>."
+    exit 0
+}
 
 warning_categories='environment file'
 
@@ -151,11 +178,11 @@ libtoolize_environment_options ()
 
     # Pass back the updated list of options.
     if test -n "$envopts"; then
-      func_quote_for_eval "$envopts" ${1+"$@"}
+      func_quote eval "$envopts" ${1+"$@"}
     else
-      func_quote_for_eval ${1+"$@"}
+      func_quote eval ${1+"$@"}
     fi
-    libtoolize_environment_options_result=$func_quote_for_eval_result
+    libtoolize_environment_options_result=$func_quote_result
 }
 func_add_hook func_options_prep libtoolize_environment_options
 
@@ -179,10 +206,6 @@ libtoolize_options_prep ()
     opt_subproject=false
 
     ltdl_mode=
-
-    # Pass back the list of options.
-    func_quote_for_eval ${1+"$@"}
-    libtoolize_options_prep_result=$func_quote_for_eval_result
 }
 func_add_hook func_options_prep libtoolize_options_prep
 
@@ -252,8 +275,8 @@ libtoolize_parse_options ()
     done
 
     # save modified positional parameters for caller
-    func_quote_for_eval ${1+"$@"}
-    libtoolize_parse_options_result=$func_quote_for_eval_result
+    func_quote eval ${1+"$@"}
+    libtoolize_parse_options_result=$func_quote_result
 }
 func_add_hook func_parse_options libtoolize_parse_options
 
@@ -286,8 +309,8 @@ libtoolize_validate_options ()
       func_fatal_help "unknown additional arguments: '${1+$@}'"
 
     # Pass back the empty argument list
-    func_quote_for_eval ${1+"$@"}
-    libtoolize_validate_options_result=$func_quote_for_eval_result
+    func_quote eval ${1+"$@"}
+    libtoolize_validate_options_result=$func_quote_result
 }
 func_add_hook func_validate_options libtoolize_validate_options
 
@@ -514,7 +537,7 @@ func_serial_max ()
     my_sed_rest='s/^[0-9][1-9]*\.*//'
     my_sed_digits='s/[^0-9.]//g'
 
-    # Incase they turn out to be the same, we'll set it to empty
+    # In case they turn out to be the same, we'll set it to empty
     func_serial_max_result=
 
     test "X$1$2" = X`$ECHO "$1$2" | $SED "$my_sed_digits"` || {
@@ -655,6 +678,8 @@ func_serial_update ()
 
     test -f "$my_srcfile" || func_fatal_error "'$my_srcfile' does not exist."
 
+    my_src_serial=
+    my_dest_serial=
     if test -f "$my_destfile"; then
       my_src_serial=`func_serial "$my_srcfile" "$my_macro_regex"`
       my_dest_serial=`func_serial "$my_destfile" "$my_macro_regex"`
@@ -680,7 +705,7 @@ func_serial_update ()
       func_notquiet_hdr "$my_msg_var" "'$my_destfile' is already up to date."
     fi
 
-    # Do this after the copy for hand maintained 'aclocal.m4', incase
+    # Do this after the copy for hand maintained 'aclocal.m4', in case
     # it has 'm4_include([DESTFILE])', so the copy effectively already
     # updated 'aclocal.m4'.
     my_included_files=`func_included_files aclocal.m4`
@@ -694,7 +719,7 @@ func_serial_update ()
       # serial tags, so the update message will be correctly given
       # if aclocal.m4 contains an untagged --i.e older-- macro file):
       *)
-        if test -f aclocal.m4; then
+        if test -f aclocal.m4 && test '' != "$my_src_serial"; then
           func_serial_max \
               "$my_src_serial" `func_serial aclocal.m4 "$my_macro_regex"`
           if test "X$my_src_serial" = "X$func_serial_max_result"; then
@@ -945,7 +970,15 @@ func_install_pkgltdl_files ()
 	  ;;
 
         config-h.in)
-          test subproject = "$ltdl_mode" || continue
+          test subproject = "$ltdl_mode" && {
+            # Always copy config-h.in, otherwise automake's autoheader rules
+            # will change the destination's timestamp if it is symlinked.
+            ( opt_copy=:
+              func_copy "$file" "$pkgltdldir" "$ltdl_dir" \
+                pkgltdl_header "$my_copy_filter"
+            )
+          }
+          continue
           ;;
 
         configure)

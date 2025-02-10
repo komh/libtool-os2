@@ -1,6 +1,6 @@
 # Process with autom4te to create an -*- Autotest -*- test suite.
 #
-#   Copyright (C) 2004-2015 Free Software Foundation, Inc.
+#   Copyright (C) 2004-2019, 2021-2024 Free Software Foundation, Inc.
 #   Written by Gary V. Vaughan, 2004
 #
 #   This file is part of GNU Libtool.
@@ -16,10 +16,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GNU Libtool; see the file COPYING.  If not, a copy
-# can be downloaded from  http://www.gnu.org/licenses/gpl.html,
-# or obtained by writing to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GNU Libtool.  If not, see <https://www.gnu.org/licenses/>.
 ####
 
 m4_divert_push([PREPARE_TESTS])dnl
@@ -29,8 +26,7 @@ m4_divert_push([PREPARE_TESTS])dnl
 : ${AUTOCONF=autoconf}
 : ${AUTOMAKE=automake}
 : ${AUTORECONF=autoreconf}
-test set = "${ECHO+set}" || ECHO=${as_echo-'printf %s\n'}
-: ${ECHO=$as_echo}
+: ${ECHO=AS_ECHO}
 for tool in ACLOCAL AUTOHEADER AUTOCONF AUTOMAKE AUTORECONF; do
   if eval \$$tool --version >/dev/null 2>&1; then :; else eval $tool=no; fi
 done
@@ -168,7 +164,8 @@ m4_define([LT_AT_AUTORECONF],
 [[m4_ifndef([AC_CONFIG_MACRO_DIRS],
 	  [m4_define([AC_CONFIG_MACRO_DIRS], m4_defn([AC_CONFIG_MACRO_DIR]))])
 ]])
-AT_CHECK([$AUTORECONF $1], [0], [ignore], [stderr],
+# This is stdout because its output is used by other test cases.
+AT_CHECK([$AUTORECONF $1], [0], [stdout], [stderr],
   [AT_CHECK([$GREP 'require .*but have' stderr && (exit 77)], [1])])
 AT_XFAIL_IF(
   [case ,$AUTORECONF,$AUTOCONF,$AUTOHEADER,$ACLOCAL,$AUTOMAKE, in *,no,*) :;; *) false;; esac])
@@ -274,7 +271,7 @@ AT_CHECK([test -z "$leftovers"])
 # Ensure correct line ending for expected output of host executables.
 m4_define([LT_AT_HOST_DATA],
 [AT_DATA([$1], [$2])
-case $host_os in mingw*)
+case $host_os in mingw* | windows*)
   awk '{printf ("%s\r\n", [$]0);}' < $1 > $1.t && mv -f $1.t $1 ;;
 esac])
 
@@ -285,7 +282,7 @@ esac])
 # If RESULT-FILE is given, FILE is left untouched. If not, convert in-place.
 m4_define([LT_AT_UNIFY_NL],
 [case $host_os in
-  mingw*)
+  mingw* | windows*)
     tr -d '\015' < $1 > m4_ifval([$2], [$2], [$1.t
     mv -f $1.t $1]) ;; m4_ifval([$2], [
   *)

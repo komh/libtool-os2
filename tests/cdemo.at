@@ -1,6 +1,7 @@
 # cdemo.at -- Using Automake to build a program and library -*- Autotest -*-
 #
-#   Copyright (C) 2003-2004, 2011-2015 Free Software Foundation, Inc.
+#   Copyright (C) 2003-2004, 2011-2019, 2021-2024 Free Software
+#   Foundation, Inc.
 #   Written by Gary V. Vaughan, 2003
 #
 #   This file is part of GNU Libtool.
@@ -16,10 +17,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with GNU Libtool; see the file COPYING.  If not, a copy
-# can be downloaded from  http://www.gnu.org/licenses/gpl.html,
-# or obtained by writing to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with GNU Libtool.  If not, see <https://www.gnu.org/licenses/>.
 ####
 
 
@@ -183,7 +181,7 @@ _LT_SETUP
 
 LT_AT_CHECK_CONFIG([--disable-static])
 
-AT_CHECK([$EGREP "^allow_undefined_flag=.\{0,1\}unsupported.\{0,1\}$" libtool && (exit 77)],
+AT_CHECK([$EGREP "^allow_undefined_flag=.\{0,1}unsupported.\{0,1}$" libtool && (exit 77)],
           1, [ignore])
 
 $SED 's|allow_undefined=no|allow_undefined=yes|g' libtool > ltnew && mv -f ltnew libtool

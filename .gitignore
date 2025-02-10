@@ -1,13 +1,18 @@
 *~
 *.a
+*.bak
 *.d
 *.dll
 *.exe
 *.la
+*.lib
 *.lo
+*.map
 *.o
 *.obj
 *.res
+*_auto.def
+*_auto.libname
 .deps
 .dirstamp
 .libs
@@ -15,3 +20,4 @@ autom4te.cache
 config.log
 config.status
 stamp-h1
+configure.log
