@@ -393,7 +393,7 @@ am__DIST_COMMON = $(dist_man1_MANS) $(doc_libtool_TEXINFOS) \
 	$(top_srcdir)/libltdl/lt__argz.c \
 	$(top_srcdir)/libltdl/lt__dirent.c \
 	$(top_srcdir)/libltdl/lt__strl.c AUTHORS COPYING ChangeLog \
-	INSTALL NEWS README TODO build-aux/compile \
+	INSTALL NEWS README THANKS TODO build-aux/compile \
 	build-aux/config.guess build-aux/config.sub build-aux/depcomp \
 	build-aux/install-sh build-aux/ltmain.sh build-aux/mdate-sh \
 	build-aux/missing build-aux/texinfo.tex
@@ -1008,6 +1008,7 @@ TESTS_ENVIRONMENT = MAKE="$(MAKE)" CC="$(CC)" CFLAGS="$(CFLAGS)" \
 	F77="$(F77)" FFLAGS="$(FFLAGS)" \
 	FC="$(FC)" FCFLAGS="$(FCFLAGS)" \
 	GCJ="$(GCJ)" GCJFLAGS="$(GCJFLAGS)" \
+	PATH_SEPARATOR="$(PATH_SEPARATOR)" \
 	lt_cv_with_aix_soname="$(with_aix_soname)" \
 	lt_cv_to_host_file_cmd="$(to_host_file_cmd)" \
 	lt_cv_to_tool_file_cmd="$(to_tool_file_cmd)"
