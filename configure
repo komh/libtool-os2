@@ -11957,17 +11957,17 @@ _LT_EOF
       hardcode_minus_L=yes
       allow_undefined_flag=unsupported
       shrext_cmds=.dll
-      archive_cmds='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
-	$ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
-	$ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
-	$ECHO EXPORTS >> $output_objdir/$libname.def~
+      archive_cmds='echo "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	echo "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	echo "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	echo EXPORTS >> $output_objdir/$libname.def~
 	emxexp $libobjs | $SED /"_DLL_InitTerm"/d >> $output_objdir/$libname.def~
 	$CC -Zdll -Zcrtdll -o $output_objdir/$soname $libobjs $deplibs $compiler_flags $output_objdir/$libname.def~
 	emximp -o $lib $output_objdir/$libname.def'
-      archive_expsym_cmds='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
-	$ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
-	$ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
-	$ECHO EXPORTS >> $output_objdir/$libname.def~
+      archive_expsym_cmds='echo "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	echo "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	echo "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	echo EXPORTS >> $output_objdir/$libname.def~
 	prefix_cmds="$SED"~
 	if test EXPORTS = "`$SED 1q $export_symbols`"; then
 	  prefix_cmds="$prefix_cmds -e 1d";
@@ -12834,17 +12834,17 @@ printf "%s\n" "$lt_cv_irix_exported_symbol" >&6; }
       hardcode_minus_L=yes
       allow_undefined_flag=unsupported
       shrext_cmds=.dll
-      archive_cmds='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
-	$ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
-	$ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
-	$ECHO EXPORTS >> $output_objdir/$libname.def~
+      archive_cmds='echo "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	echo "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	echo "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	echo EXPORTS >> $output_objdir/$libname.def~
 	emxexp $libobjs | $SED /"_DLL_InitTerm"/d >> $output_objdir/$libname.def~
 	$CC -Zdll -Zcrtdll -o $output_objdir/$soname $libobjs $deplibs $compiler_flags $output_objdir/$libname.def~
 	emximp -o $lib $output_objdir/$libname.def'
-      archive_expsym_cmds='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
-	$ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
-	$ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
-	$ECHO EXPORTS >> $output_objdir/$libname.def~
+      archive_expsym_cmds='echo "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	echo "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	echo "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	echo EXPORTS >> $output_objdir/$libname.def~
 	prefix_cmds="$SED"~
 	if test EXPORTS = "`$SED 1q $export_symbols`"; then
 	  prefix_cmds="$prefix_cmds -e 1d";
@@ -17977,17 +17977,17 @@ fi
 	hardcode_minus_L_CXX=yes
 	allow_undefined_flag_CXX=unsupported
 	shrext_cmds=.dll
-	archive_cmds_CXX='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
-	  $ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
-	  $ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
-	  $ECHO EXPORTS >> $output_objdir/$libname.def~
+	archive_cmds_CXX='echo "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	  echo "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	  echo "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	  echo EXPORTS >> $output_objdir/$libname.def~
 	  emxexp $libobjs | $SED /"_DLL_InitTerm"/d >> $output_objdir/$libname.def~
 	  $CC -Zdll -Zcrtdll -o $output_objdir/$soname $libobjs $deplibs $compiler_flags $output_objdir/$libname.def~
 	  emximp -o $lib $output_objdir/$libname.def'
-	archive_expsym_cmds_CXX='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
-	  $ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
-	  $ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
-	  $ECHO EXPORTS >> $output_objdir/$libname.def~
+	archive_expsym_cmds_CXX='echo "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	  echo "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	  echo "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	  echo EXPORTS >> $output_objdir/$libname.def~
 	  prefix_cmds="$SED"~
 	  if test EXPORTS = "`$SED 1q $export_symbols`"; then
 	    prefix_cmds="$prefix_cmds -e 1d";
@@ -22232,17 +22232,17 @@ _LT_EOF
       hardcode_minus_L_F77=yes
       allow_undefined_flag_F77=unsupported
       shrext_cmds=.dll
-      archive_cmds_F77='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
-	$ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
-	$ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
-	$ECHO EXPORTS >> $output_objdir/$libname.def~
+      archive_cmds_F77='echo "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	echo "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	echo "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	echo EXPORTS >> $output_objdir/$libname.def~
 	emxexp $libobjs | $SED /"_DLL_InitTerm"/d >> $output_objdir/$libname.def~
 	$CC -Zdll -Zcrtdll -o $output_objdir/$soname $libobjs $deplibs $compiler_flags $output_objdir/$libname.def~
 	emximp -o $lib $output_objdir/$libname.def'
-      archive_expsym_cmds_F77='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
-	$ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
-	$ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
-	$ECHO EXPORTS >> $output_objdir/$libname.def~
+      archive_expsym_cmds_F77='echo "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	echo "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	echo "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	echo EXPORTS >> $output_objdir/$libname.def~
 	prefix_cmds="$SED"~
 	if test EXPORTS = "`$SED 1q $export_symbols`"; then
 	  prefix_cmds="$prefix_cmds -e 1d";
@@ -23057,17 +23057,17 @@ printf "%s\n" "$lt_cv_irix_exported_symbol" >&6; }
       hardcode_minus_L_F77=yes
       allow_undefined_flag_F77=unsupported
       shrext_cmds=.dll
-      archive_cmds_F77='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
-	$ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
-	$ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
-	$ECHO EXPORTS >> $output_objdir/$libname.def~
+      archive_cmds_F77='echo "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	echo "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	echo "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	echo EXPORTS >> $output_objdir/$libname.def~
 	emxexp $libobjs | $SED /"_DLL_InitTerm"/d >> $output_objdir/$libname.def~
 	$CC -Zdll -Zcrtdll -o $output_objdir/$soname $libobjs $deplibs $compiler_flags $output_objdir/$libname.def~
 	emximp -o $lib $output_objdir/$libname.def'
-      archive_expsym_cmds_F77='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
-	$ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
-	$ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
-	$ECHO EXPORTS >> $output_objdir/$libname.def~
+      archive_expsym_cmds_F77='echo "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	echo "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	echo "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	echo EXPORTS >> $output_objdir/$libname.def~
 	prefix_cmds="$SED"~
 	if test EXPORTS = "`$SED 1q $export_symbols`"; then
 	  prefix_cmds="$prefix_cmds -e 1d";
@@ -26176,17 +26176,17 @@ _LT_EOF
       hardcode_minus_L_FC=yes
       allow_undefined_flag_FC=unsupported
       shrext_cmds=.dll
-      archive_cmds_FC='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
-	$ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
-	$ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
-	$ECHO EXPORTS >> $output_objdir/$libname.def~
+      archive_cmds_FC='echo "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	echo "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	echo "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	echo EXPORTS >> $output_objdir/$libname.def~
 	emxexp $libobjs | $SED /"_DLL_InitTerm"/d >> $output_objdir/$libname.def~
 	$CC -Zdll -Zcrtdll -o $output_objdir/$soname $libobjs $deplibs $compiler_flags $output_objdir/$libname.def~
 	emximp -o $lib $output_objdir/$libname.def'
-      archive_expsym_cmds_FC='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
-	$ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
-	$ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
-	$ECHO EXPORTS >> $output_objdir/$libname.def~
+      archive_expsym_cmds_FC='echo "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	echo "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	echo "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	echo EXPORTS >> $output_objdir/$libname.def~
 	prefix_cmds="$SED"~
 	if test EXPORTS = "`$SED 1q $export_symbols`"; then
 	  prefix_cmds="$prefix_cmds -e 1d";
@@ -27001,17 +27001,17 @@ printf "%s\n" "$lt_cv_irix_exported_symbol" >&6; }
       hardcode_minus_L_FC=yes
       allow_undefined_flag_FC=unsupported
       shrext_cmds=.dll
-      archive_cmds_FC='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
-	$ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
-	$ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
-	$ECHO EXPORTS >> $output_objdir/$libname.def~
+      archive_cmds_FC='echo "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	echo "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	echo "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	echo EXPORTS >> $output_objdir/$libname.def~
 	emxexp $libobjs | $SED /"_DLL_InitTerm"/d >> $output_objdir/$libname.def~
 	$CC -Zdll -Zcrtdll -o $output_objdir/$soname $libobjs $deplibs $compiler_flags $output_objdir/$libname.def~
 	emximp -o $lib $output_objdir/$libname.def'
-      archive_expsym_cmds_FC='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
-	$ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
-	$ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
-	$ECHO EXPORTS >> $output_objdir/$libname.def~
+      archive_expsym_cmds_FC='echo "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	echo "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	echo "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	echo EXPORTS >> $output_objdir/$libname.def~
 	prefix_cmds="$SED"~
 	if test EXPORTS = "`$SED 1q $export_symbols`"; then
 	  prefix_cmds="$prefix_cmds -e 1d";
@@ -29830,17 +29830,17 @@ _LT_EOF
       hardcode_minus_L_GO=yes
       allow_undefined_flag_GO=unsupported
       shrext_cmds=.dll
-      archive_cmds_GO='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
-	$ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
-	$ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
-	$ECHO EXPORTS >> $output_objdir/$libname.def~
+      archive_cmds_GO='echo "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	echo "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	echo "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	echo EXPORTS >> $output_objdir/$libname.def~
 	emxexp $libobjs | $SED /"_DLL_InitTerm"/d >> $output_objdir/$libname.def~
 	$CC -Zdll -Zcrtdll -o $output_objdir/$soname $libobjs $deplibs $compiler_flags $output_objdir/$libname.def~
 	emximp -o $lib $output_objdir/$libname.def'
-      archive_expsym_cmds_GO='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
-	$ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
-	$ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
-	$ECHO EXPORTS >> $output_objdir/$libname.def~
+      archive_expsym_cmds_GO='echo "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	echo "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	echo "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	echo EXPORTS >> $output_objdir/$libname.def~
 	prefix_cmds="$SED"~
 	if test EXPORTS = "`$SED 1q $export_symbols`"; then
 	  prefix_cmds="$prefix_cmds -e 1d";
@@ -30666,17 +30666,17 @@ printf "%s\n" "$lt_cv_irix_exported_symbol" >&6; }
       hardcode_minus_L_GO=yes
       allow_undefined_flag_GO=unsupported
       shrext_cmds=.dll
-      archive_cmds_GO='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
-	$ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
-	$ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
-	$ECHO EXPORTS >> $output_objdir/$libname.def~
+      archive_cmds_GO='echo "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	echo "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	echo "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	echo EXPORTS >> $output_objdir/$libname.def~
 	emxexp $libobjs | $SED /"_DLL_InitTerm"/d >> $output_objdir/$libname.def~
 	$CC -Zdll -Zcrtdll -o $output_objdir/$soname $libobjs $deplibs $compiler_flags $output_objdir/$libname.def~
 	emximp -o $lib $output_objdir/$libname.def'
-      archive_expsym_cmds_GO='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
-	$ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
-	$ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
-	$ECHO EXPORTS >> $output_objdir/$libname.def~
+      archive_expsym_cmds_GO='echo "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	echo "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	echo "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	echo EXPORTS >> $output_objdir/$libname.def~
 	prefix_cmds="$SED"~
 	if test EXPORTS = "`$SED 1q $export_symbols`"; then
 	  prefix_cmds="$prefix_cmds -e 1d";
@@ -32121,17 +32121,17 @@ _LT_EOF
       hardcode_minus_L_GCJ=yes
       allow_undefined_flag_GCJ=unsupported
       shrext_cmds=.dll
-      archive_cmds_GCJ='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
-	$ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
-	$ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
-	$ECHO EXPORTS >> $output_objdir/$libname.def~
+      archive_cmds_GCJ='echo "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	echo "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	echo "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	echo EXPORTS >> $output_objdir/$libname.def~
 	emxexp $libobjs | $SED /"_DLL_InitTerm"/d >> $output_objdir/$libname.def~
 	$CC -Zdll -Zcrtdll -o $output_objdir/$soname $libobjs $deplibs $compiler_flags $output_objdir/$libname.def~
 	emximp -o $lib $output_objdir/$libname.def'
-      archive_expsym_cmds_GCJ='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
-	$ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
-	$ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
-	$ECHO EXPORTS >> $output_objdir/$libname.def~
+      archive_expsym_cmds_GCJ='echo "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	echo "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	echo "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	echo EXPORTS >> $output_objdir/$libname.def~
 	prefix_cmds="$SED"~
 	if test EXPORTS = "`$SED 1q $export_symbols`"; then
 	  prefix_cmds="$prefix_cmds -e 1d";
@@ -32957,17 +32957,17 @@ printf "%s\n" "$lt_cv_irix_exported_symbol" >&6; }
       hardcode_minus_L_GCJ=yes
       allow_undefined_flag_GCJ=unsupported
       shrext_cmds=.dll
-      archive_cmds_GCJ='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
-	$ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
-	$ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
-	$ECHO EXPORTS >> $output_objdir/$libname.def~
+      archive_cmds_GCJ='echo "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	echo "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	echo "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	echo EXPORTS >> $output_objdir/$libname.def~
 	emxexp $libobjs | $SED /"_DLL_InitTerm"/d >> $output_objdir/$libname.def~
 	$CC -Zdll -Zcrtdll -o $output_objdir/$soname $libobjs $deplibs $compiler_flags $output_objdir/$libname.def~
 	emximp -o $lib $output_objdir/$libname.def'
-      archive_expsym_cmds_GCJ='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
-	$ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
-	$ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
-	$ECHO EXPORTS >> $output_objdir/$libname.def~
+      archive_expsym_cmds_GCJ='echo "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	echo "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	echo "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	echo EXPORTS >> $output_objdir/$libname.def~
 	prefix_cmds="$SED"~
 	if test EXPORTS = "`$SED 1q $export_symbols`"; then
 	  prefix_cmds="$prefix_cmds -e 1d";
